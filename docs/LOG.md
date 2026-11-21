@@ -28,6 +28,24 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 - [ ] De discutat cu B/A: mutăm harta 3D și navigarea în `web/src/features/scene3d` și `routing` acum că aplicația e pe web (PWA)?
 
 **Fișiere:** `web-3d/**`, `docs/ARCHITECTURE.md`, `docs/LOG.md`
+## 2026-11-21 12:37 · Stefanita · sesiune 61021345
+**Rol:** Design
+**Ce am făcut:**
+- Am căutat inspirație pe net: MazeMap, Mappedin, MapsPeople, My Class Map (Utah), HyperLocal, selectorul de etaje din Apple Maps, animații de traseu de pe Awwwards și Codrops, View Transitions API.
+- Artefact cu propuneri: https://claude.ai/artifact/WZ3etCLxjLEB9ejDr3QPum (privat, se dă acces din Share). Sursa e în `docs/design/roomly-miscare.html`.
+  - 3 direcții vizuale: Plăcuța, Planșa, Coridor noaptea.
+  - 12 animații cu demo live pe planul real (`plan_2d.json`), dintre care 7 originale.
+  - 3 animații pentru pagina de feedback.
+  - Recomandarea pentru demo-ul de 90 s.
+
+**Decizii:**
+- — (propuneri, de ales la ședință)
+
+**Ce a rămas:**
+- [ ] De ales la ședință direcția vizuală și animațiile care intră în demo.
+- [ ] Numele: artefactul folosește „Roomly” (`CONTEXT.md` §1), dar `CLAUDE.md` încă spune „Coridor”.
+
+**Fișiere:** `docs/design/roomly-miscare.html`, `docs/LOG.md`
 
 ## 2026-11-21 12:32 · Stefanita · sesiune 82dc84da
 **Rol:** organizare echipă (acces GitHub)
