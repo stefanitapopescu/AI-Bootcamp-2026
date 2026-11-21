@@ -32,9 +32,9 @@ rulează .claude/scripts/gen-legend.sh. La pornire și la Stop îl rulează oric
 - **Când:** înainte ca Claude să folosească un tool (`PreToolUse`) · **pe:** `Write|Edit|MultiEdit` · **timp maxim:** 10 s
 
 blochează scrierea de chei secrete în cod.
-- cheia Anthropic (sk-ant-...) nicăieri în afară de fișiere .env
-- cheia Supabase service_role / sb_secret_ nicăieri în android/ sau admin-web/
-  (codul de client e public: oricine dezarhivează APK-ul vede cheia)
+- cheia Anthropic (sk-ant-...) nicăieri în afară de fișierele .env din afara web/
+- cheia Supabase service_role / sb_secret_ nicăieri în web/ (nici în .env de acolo:
+  Vite pune variabilele VITE_* în codul trimis browserului, deci oricine le vede)
 
 ### `kotlin-ui-check.sh`
 

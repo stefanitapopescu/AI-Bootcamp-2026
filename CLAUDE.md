@@ -1,6 +1,6 @@
 # CLAUDE.md: regulile proiectului (Coridor)
 
-Aplicație Android: orarul studentului + harta 2D a etajului cu sala și drumul până la ea, pentru clădirea Electro (AC, UPT). Echipă de 4–5 oameni, fiecare cu **contul lui de Claude**, în UPT AI Prototyping Bootcamp (20–22 nov 2026).
+Aplicație web pentru telefon (PWA, Vite + React): orarul studentului + harta 2D a etajului cu sala și drumul până la ea, pentru clădirea Electro (AC, UPT). Echipă de 4–5 oameni, fiecare cu **contul lui de Claude**, în UPT AI Prototyping Bootcamp (20–22 nov 2026).
 
 ## Ce citești, în ordinea asta
 
@@ -31,7 +31,7 @@ Conturile de Claude **nu își văd conversațiile**. Singura memorie comună es
 
   ```markdown
   ## 2026-11-21 09:27 · Nume · sesiune 1a2b3c4d
-  **Rol:** Android / Localizare+AR / Backend / Design / Date+pitch
+  **Rol:** Aplicația web / Hartă+traseu+QR / Backend+admin / Design / Date+pitch
   **Ce am făcut:**
   - …
   **Decizii:**
@@ -48,8 +48,8 @@ Conturile de Claude **nu își văd conversațiile**. Singura memorie comună es
 
 - Textul pentru utilizator și documentația: **română**. Identificatorii din cod (tabele, câmpuri, clase, funcții): **engleză**.
 - Stack-ul e DECIS în `CONTEXT.md` §9. Nu adăuga biblioteci noi fără să le notezi în jurnal, la Decizii.
-- Cheia Anthropic stă doar în backend (`.env`, niciodată în git sau în aplicația Android).
-- UX-ul Android are prioritate maximă (`CONTEXT.md` §10).
+- Cheia Anthropic stă doar în backend (`.env`, niciodată în git sau în `web/`: tot ce e în `web/` ajunge public în browser, inclusiv variabilele `VITE_*`).
+- UX-ul pe telefon are prioritate maximă (`CONTEXT.md` §10).
 
 ## Skill-uri și hook-uri
 

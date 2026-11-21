@@ -20,11 +20,17 @@ ConcursTOP/
 │   ├── settings.local.json   setările TALE, ex. LOG_AUTHOR (NU intră în git)
 │   ├── hooks/                session-start.sh, stop-log-check.sh, guard-secrets.sh, kotlin-ui-check.sh, legend-update.sh
 │   ├── scripts/              whoami.sh, log-header.sh, worktree-hash.sh, gen-legend.sh
-│   └── skills/               /start, /log, /finish, coridor-ui + skill-uri Android verificate (THIRD_PARTY.md)
+│   └── skills/               /start, /log, /finish, coridor-ui + skill-uri Android verificate (THIRD_PARTY.md; rămase de dinainte de trecerea pe web)
 │
-├── android/        (planificat) Kotlin + Jetpack Compose, MVVM, Koin, Room, SceneView/ARCore
+├── web/            (planificat) PWA: Vite + React + TS, Tailwind + shadcn/ui, TanStack Query, vite-plugin-pwa
+│   └── src/
+│       ├── app/          rute, layout, cele 3 taburi                  (A)
+│       ├── components/   componente comune + ui/ (shadcn)             (A)
+│       ├── features/     home, timetable, room, search                (A)
+│       │                 map, routing, qr, scene3d                    (B)
+│       │                 admin (rutele /admin/*, login)               (C)
+│       └── lib/          client Supabase, cache (IndexedDB), tipuri   (A)
 ├── backend/        (planificat) FastAPI: importul orarului (openpyxl + Claude), procesarea scanărilor
-├── admin-web/      (planificat) React + Vite + TS, minimal: import orar, pin-uri, noduri, QR
 ├── data/           (planificat) contract.md, seed.json, scanări GLB, planuri 2D
 └── pitch/          (planificat) prezentare, video de rezervă, rezultatele testelor
 ```
@@ -34,11 +40,11 @@ Fișiere existente acum în rădăcină (vezi `CONTEXT.md` §17): `2_11_2025.glb
 ## Cum circulă datele
 
 ```text
-Excel orar ──► backend/ (openpyxl + Claude) ──► verificare admin (admin-web/) ──► Supabase (Postgres)
+Excel orar ──► backend/ (openpyxl + Claude) ──► verificare admin (web/ /admin) ──► Supabase (Postgres)
                                                                                        │
 Scanare GLB ──► glb_to_plan2d.py ──► plan_2d.json ──► Supabase Storage ───────────────┤
                                                                                        ▼
-                                          android/: Room (offline) ──► Orar · Hartă 2D · Traseu A* · QR · AR
+                 web/: Supabase → TanStack Query (+ cache IndexedDB / service worker) ──► Orar · Hartă 2D · Traseu A* · QR · 3D
 ```
 
 - **Contractul de date** (formatele JSON, tabelele din `CONTEXT.md` §8) stă în `data/contract.md`. Toată lumea lucrează pe `data/seed.json` până când backend-ul e gata.
@@ -48,10 +54,10 @@ Scanare GLB ──► glb_to_plan2d.py ──► plan_2d.json ──► Supabase
 
 | Zonă | Rol (`CONTEXT.md` §11) |
 |---|---|
-| `android/` (arhitectură, date, hartă, orar) | 1. Android |
-| `android/` (localizare QR, 3D, AR) | 2. Localizare + 3D/AR |
-| `backend/`, `admin-web/`, Supabase | 3. Backend + admin |
-| Tema și componentele Compose din `android/` | 4. Design UX/UI |
+| `web/` (schelet, date, cache, orar, căutare) | 1. Aplicația web |
+| `web/src/features/{map,routing,qr,scene3d}` | 2. Hartă, traseu, localizare, 3D |
+| `backend/`, `web/src/features/admin`, Supabase | 3. Backend + admin |
+| Tema Tailwind și componentele din `web/src/components/` | 4. Design UX/UI |
 | `data/`, `pitch/` | 5. Date, teste, pitch |
 
 Pentru concurs, repartizarea pe oameni (4–5 oameni, 3 laptopuri) și granițele exacte pe foldere sunt în `docs/PLAN.md`.

@@ -38,3 +38,7 @@ dist/
 # Sistem
 .DS_Store
 Thumbs.db
+
+# Web (Vite PWA, Vercel)
+dev-dist/
+.vercel/
