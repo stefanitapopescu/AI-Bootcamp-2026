@@ -26,6 +26,47 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 - [ ] De discutat cu echipa: folosim geometria (contur + uși) din `web-3d/src/map/floor.json` și în `plan_2d.json` / Android?
 
 **Fișiere:** `web-3d/**`, `docs/ARCHITECTURE.md`, `docs/LOG.md`
+## 2026-11-21 12:32 · Stefanita · sesiune 82dc84da
+**Rol:** organizare echipă (acces GitHub)
+**Ce am făcut:**
+- Diagnostic pentru „permission denied” la push-ul colegilor. Repo-ul e **public**, pe cont personal. `main` nu e protejat, nu are rulesets și nu există git hook-uri locale, deci nu de acolo vine blocarea.
+- Cauze rămase: invitația de colaborator neacceptată (expiră în 7 zile) sau git logat cu alt cont GitHub în Windows Credential Manager (`git credential-manager github logout <cont>`). La `Permission denied (publickey)` se trece pe remote HTTPS.
+
+**Decizii:**
+- —
+
+**Ce a rămas:**
+- [ ] Fiecare coleg: acceptat invitația de la github.com/stefanitapopescu/AI-Bootcamp-2026/invitations. Dacă tot nu merge, trimis mesajul exact al erorii (cu „denied to …”).
+- [ ] Repo-ul e încă public, deși conține scanarea clădirii (`CONTEXT.md` §13). De făcut privat după ce colegii acceptă invitațiile.
+- [ ] `kotlin-ui-check.sh` nu mai are rost după trecerea la web. De scos, dacă echipa e de acord.
+
+**Fișiere:** `docs/LOG.md`
+
+## 2026-11-21 12:32 · Stefanita · sesiune 5740d766
+**Rol:** organizare echipă (schimbare de stack)
+**Ce am făcut:**
+- Trecerea de la aplicația Android nativă la o **aplicație web pentru telefon (PWA)**, instalabilă pe ecranul principal. Actualizate:
+  - `CONTEXT.md`: §1, §5.6, §5.8 (QR, Wi-Fi, AR), §5.10 (notificări → P2), §8 (cache), §9 (stack nou + motivele schimbării), §10 (UX pe telefon), §11–§15;
+  - `docs/PLAN.md`: rolurile A/B/C, granițele pe foldere în `web/`, calendarul, ce tăiem; D verifică și semnalul în clădire;
+  - `docs/ARCHITECTURE.md`: structura `web/src/...` pe roluri, fluxul de date;
+  - `CLAUDE.md`: descrierea și convențiile.
+- `guard-secrets.sh`: verifică acum `web/`, **inclusiv `.env`-urile de acolo** (Vite pune `VITE_*` în codul trimis browserului). Testat pe 6 cazuri.
+
+**Decizii:**
+- Stack: **Vite + React + TS + React Router, Tailwind + shadcn/ui, motion, vaul, supabase-js + TanStack Query, vite-plugin-pwa + Dexie, hartă în SVG, three.js (r3f) pentru 3D, găzduire pe Vercel.** Next.js a fost luat în calcul și respins (aplicația rulează aproape tot în browser, SSR nu ajută pe semnal slab, PWA offline e mai greu).
+- **Întâi pe date, cache ca rezervă** (în loc de offline-first cu Room).
+- Admin-ul e **în aceeași aplicație**, pe `/admin`, și folosește componenta de hartă a lui B. Folderele `android/` și `admin-web/` dispar, apare `web/`.
+- Tăiate de platformă: AR (ARCore), Wi-Fi fingerprinting, notificările locale. App Links nu mai e nevoie: camera telefonului deschide direct `/q/<id>`.
+- **De confirmat cu echipa** la următoarea ședință (stack-ul era DECIS).
+
+**Ce a rămas:**
+- [ ] Confirmarea echipei pentru trecerea pe web.
+- [ ] Skill-urile Android din `.claude/skills/` (9 externe + `coridor-ui`) și hook-ul `kotlin-ui-check.sh` nu mai sunt relevante. De șters sau de înlocuit cu `coridor-ui` pentru web (Tailwind + shadcn, lista de verificare din `CONTEXT.md` §10). Skill-urile `frontend-design`, `vercel:shadcn`, `vercel:react-best-practices` sunt deja disponibile ca plugin-uri.
+- [ ] A: schelet `web/` + deploy pe Vercel (vezi `PLAN.md` §3). Fixat domeniul **înainte** de printarea afișelor QR.
+- [ ] D: test de semnal pe etajul 6B (date mobile + eduroam, holuri + scări).
+- `.gitignore`: `dev-dist/` (service worker în dev) și `.vercel/`. `.env*`, `node_modules/` și `dist/` erau deja ignorate global.
+
+**Fișiere:** `CONTEXT.md`, `docs/PLAN.md`, `docs/ARCHITECTURE.md`, `CLAUDE.md`, `.claude/hooks/guard-secrets.sh`, `docs/LOG.md`
 
 ## 2026-11-21 09:42 · Stefanita · sesiune 605d566a
 **Rol:** organizare echipă (review structură + plan)

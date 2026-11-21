@@ -9,11 +9,11 @@
 
 ## 1. Rezumat
 
-- **Ce este:** o aplicație Android care îi arată studentului **orarul lui** și, cu un tap pe un curs, **harta 2D a etajului cu sala evidențiată și drumul până la ea**.
+- **Ce este:** o aplicație web pentru telefon (PWA, instalabilă pe ecranul principal) care îi arată studentului **orarul lui** și, cu un tap pe un curs, **harta 2D a etajului cu sala evidențiată și drumul până la ea**.
 - **Pentru cine:** în primul rând studenții din **anul I** de la Facultatea de Automatică și Calculatoare (AC), UPT Timișoara, cu ore în clădirea **Electro**. Pe termen lung: orice student dintr-o clădire cu multe etaje, corpuri și uși.
 - **Problema:** orarul e un Excel greu de citit pe telefon, codurile sălilor sunt criptice (`B528b`, `SPM202`, `M304 - MEC`), cursurile sunt împărțite între mai multe corpuri și clădiri, iar studenții noi nu cunosc clădirea.
 - **Soluția:** orarul oficial e importat automat (cu AI + verificare umană). Hărțile de interior sunt generate din scanări 3D făcute cu telefonul. Localizarea se face prin coduri QR lipite pe holuri (afișezi „Ești aici” și traseul), cu săgeți AR în camera live ca extensie.
-- **Nume:** **Roomly** (DECIS). În engleză, ca să meargă și în afara României. Ideea de la care pornește: *„Where's my room? Roomly knows.”* Pachetul Android: `ro.roomly.app` (DESCHIS, de verificat că e liber în Google Play).
+- **Nume:** **Roomly** (DECIS). În engleză, ca să meargă și în afara României. Ideea de la care pornește: *„Where's my room? Roomly knows.”* Domeniul aplicației: DESCHIS (pentru concurs ajunge un `*.vercel.app`).
 
 ---
 
@@ -110,7 +110,7 @@ Destinație comună pentru căutare, orar și pin-ul de pe hartă. Conține:
 - **Puncte utile (P1, DECIS):** toalete, decanat, secretariat, lift, scări, automate, ieșiri.
 - Traseul: linie animată, instrucțiuni pas cu pas, distanță în metri și timp estimat.
 - **„Ești aici”**: punct + con de orientare, după scanarea unui cod QR (§5.8).
-- Comutator **2D / 3D / AR** (3D și AR sunt P1).
+- Comutator **2D / 3D** (3D e P1; AR doar în roadmap, §9).
 
 ### 5.7 Săli din alte clădiri (P0, DECIS)
 Card cu codul sălii, numele clădirii, descrierea și adresa din „Legenda sali” (ex. „SPM 202 · clădirea SPM, vizavi de căminul 2MV”) și un buton **„Navighează”** care deschide Google Maps spre clădire. Pentru aceste clădiri nu există hartă de interior.
@@ -118,16 +118,16 @@ Card cu codul sălii, numele clădirii, descrierea și adresa din „Legenda sal
 ### 5.8 Localizare în clădire
 | Variantă | Descriere | Prioritate | Stare |
 |---|---|---|---|
-| **QR Varianta 1** | Codul QR conține un link (`https://<domeniu>/q/<anchor_id>`) și se poate scana cu camera sistemului (App Links) sau din aplicație (Google Code Scanner). Harta afișează „Ești aici” în poziția codului, rotită cu fața spre cod. Apoi traseul pas cu pas. Punctul **nu se mișcă** după scanare; la fiecare palier sau intersecție importantă există un alt cod. | **P0** | DECIS, **testat primul în clădire** |
-| **Wi-Fi fingerprinting** | Hartă radio (BSSID + RSSI la fiecare ~2–3 m), comparată la rulare cu ce vede telefonul (kNN). Precizie de 3–5 m, detectează bine etajul, nu dă direcția. Rol: **rezervă** dacă QR V1 nu convinge la teste, sau **bonus** pentru detectarea automată a etajului. | P1 | DE VALIDAT. Test de 2–3 ore pe un singur coridor înainte de orice decizie. |
-| **QR Varianta 2 = AR** | Aplicația AR recunoaște afișul (ARCore Augmented Images), calculează poziția completă a telefonului, apoi îl urmărește în timp ce merge. Săgeți 3D pe podeaua reală, indicații de viraj la noduri, mini-hartă 2D în colț. | P1/P2 | DECIS ca direcție. Este „bonus”, nu blochează demo-ul. |
+| **QR Varianta 1** | Codul QR conține un link (`https://<domeniu>/q/<anchor_id>`) și se poate scana cu camera telefonului (deschide direct aplicația web pe pagina `/q/<anchor_id>`) sau din aplicație (§9). Harta afișează „Ești aici” în poziția codului, rotită cu fața spre cod. Apoi traseul pas cu pas. Punctul **nu se mișcă** după scanare; la fiecare palier sau intersecție importantă există un alt cod. | **P0** | DECIS, **testat primul în clădire** |
+| **Wi-Fi fingerprinting** | Hartă radio (BSSID + RSSI la fiecare ~2–3 m), comparată la rulare cu ce vede telefonul (kNN). Precizie de 3–5 m, detectează bine etajul, nu dă direcția. Rol: **rezervă** dacă QR V1 nu convinge la teste, sau **bonus** pentru detectarea automată a etajului. | P2 | **Nu se poate pe web** (browserul nu scanează rețelele). Doar într-o aplicație nativă, după concurs. |
+| **QR Varianta 2 = AR** | Aplicația AR recunoaște afișul (ARCore Augmented Images), calculează poziția completă a telefonului, apoi îl urmărește în timp ce merge. Săgeți 3D pe podeaua reală, indicații de viraj la noduri, mini-hartă 2D în colț. | P2 | Direcție pentru roadmap. **Nu se poate pe web** (§9), cere o aplicație nativă după concurs. |
 | VPS fără marcaje (Immersal, MultiSet) | Localizare vizuală fără coduri | P2 | Roadmap |
 
 ### 5.9 Plimbare virtuală 3D (P1)
 Mers la persoana întâi prin GLB-ul etajului: joystick + tragere cu degetul, coliziuni cu pereții, cameră la 1,6 m. Pin-urile sunt vizibile și se pot apăsa. Opțional, „plimbare ghidată” pe traseu până la sală, ca studentul să vadă drumul de acasă.
 
-### 5.10 Notificări (P1, DECIS)
-„SO (L) începe în 15 min în B520 · Du-mă acolo”. Sunt locale (WorkManager / AlarmManager), calculate din orarul din cache. Intervalul de avertizare se poate configura în Profil.
+### 5.10 Notificări (P2)
+„SO (L) începe în 15 min în B520 · Du-mă acolo”. Pe web nu se pot programa notificări locale de încredere, deci ar fi Web Push trimis de pe server (Supabase, la ora calculată din orar). Pe iOS merge doar cu aplicația instalată pe ecranul principal. Tăiate pentru concurs.
 
 ### 5.11 Admin (P0, interfață minimală, DECIS)
 Folosit doar de echipă. Designul nu contează, doar să funcționeze.
@@ -135,7 +135,7 @@ Folosit doar de echipă. Designul nu contează, doar să funcționeze.
 **Cont de admin (P0, DECIS):**
 - Panoul admin cere **autentificare**: Supabase Auth, cu e-mail + parolă. Conturile sunt create manual pentru membrii echipei, fără înregistrare publică.
 - Rolul `admin` e salvat în tabela `admins(user_id)` (sau ca app_metadata `role=admin`) și verificat în politicile RLS. Doar adminii pot scrie.
-- Studenții **nu au cont**. Aplicația Android citește anonim.
+- Studenții **nu au cont**. Aplicația citește anonim.
 - Pe viitor, pentru alte universități: roluri pe universitate (`university_admins(user_id, university_id)`). P2.
 
 **Numele sălilor nu vin din scanare (DECIS).** Scanarea conține doar holurile și ușile, fără plăcuțe. **Adminul pune manual fiecare pin** pe ușa sălii și îi scrie codul (ex. `B623`). Sursele pentru a ști ce sală e în spatele fiecărei uși: plăcuțele de pe uși (poze făcute la scanare) și planul de evacuare de pe etaj. Lista codurilor din orar (§7.4) e folosită ca listă de selecție, ca să nu se scrie greșit.
@@ -164,7 +164,7 @@ Folosit doar de echipă. Designul nu contează, doar să funcționeze.
    - Formatul JSON: `{"units":"m","axes":"x,z of GLB (y up)","floor_y":-1.71,"floor":[poligoane],"walls":[poligoane],"stairs":[poligoane]}`.
    - Dependențe: `trimesh`, `shapely`, `matplotlib`, `numpy`.
 3. **Curățare** (opțional): petele mici se elimină, liniile se îndreaptă la 90°.
-4. **GLB comprimat** pentru 3D (`gltf-transform`, Draco + texturi 2K). De verificat că SceneView îl încarcă.
+4. **GLB comprimat** pentru 3D (`gltf-transform`, Draco + texturi 2K). De verificat că three.js (react-three-fiber) îl încarcă repede pe telefon.
 5. Adminul plasează pin-urile, nodurile și ancorele QR pe planul SVG (§5.11).
 
 ### 6.3 Ce știm despre scanarea existentă
@@ -268,7 +268,7 @@ Fiecare foaie (în afară de legendă) = un **program** (an + specializare / lim
    - model **`claude-opus-5-5`**, SDK-ul oficial Python `anthropic`, **structured outputs** cu o schemă JSON;
    - transformă `raw_text` în `{course_name, course_abbrev, type, teacher, room_code, week_rule, extra_slots[]}`. `extra_slots` acoperă orele scrise în text liber („Luni 16-18 B528b”);
    - primește ca context lista de abrevieri din foaie și legenda sălilor;
-   - **rulează doar pe server. Cheia API nu ajunge niciodată în APK.**
+   - **rulează doar pe server. Cheia API nu ajunge niciodată în codul aplicației web.**
 3. **Validare automată:** codul de sală se rezolvă (§7.4), orele sunt în intervalul 08–21, ziua e validă, grupele există, nu există suprapuneri pentru aceeași semigrupă.
 4. **Verificare umană** în admin: tabel cu rândurile suspecte evidențiate. Abia apoi publicare.
 5. Re-importul unui an sau semestru nou înlocuiește intrările acelui `term`, fără duplicate.
@@ -316,44 +316,48 @@ Exemplu de intrare reală (`An 1`, celula combinată `H33:H34`):
 **Conturi:** `admins(user_id → auth.users, created_at)`: lista conturilor de admin (echipa). Studenții nu au conturi.
 
 **Acces (RLS):** citire publică (anonimă) pentru toate tabelele de conținut; scriere (insert / update / delete) doar dacă `auth.uid()` există în `admins`. Fișierele din Storage urmează aceleași reguli.
-**Offline-first pe Android:** se descarcă tot programul studentului + toate etajele clădirii selectate în Room. Aplicația funcționează fără semnal, cu bannerul „Offline · date din <dată>”.
+**Întâi pe date, cache ca rezervă (DECIS):** aplicația citește din Supabase. Ultimele date descărcate (programul grupei, sălile, etajele, traseele clădirii selectate) rămân în IndexedDB, iar planurile și aplicația în cache-ul service worker-ului. Fără semnal, merge pe ce are, cu bannerul „Offline · date din <dată>”. Studentul doar citește, deci nu există sincronizare sau conflicte.
 
 ---
 
 ## 9. Stack tehnic (DECIS)
 
+> **Schimbat pe 2026-11-21** (Stefanita, de confirmat cu echipa): din aplicație Android nativă (Kotlin + Compose) în **aplicație web instalabilă (PWA)**, pusă pe ecranul principal al telefonului. Motive: merge pe orice telefon, inclusiv pe iPhone-urile juriului (link sau QR, fără APK); iterații mai rapide pe interfață; aceeași bază de cod pentru student și admin; nu trebuie Android Studio pe cele 3 laptopuri. Ce pierdem: AR cu ARCore și Wi-Fi fingerprinting (oricum tăiate pentru concurs), notificările locale programate. Codul Android nu fusese început. **Next.js a fost luat în calcul și respins:** aplicația rulează aproape tot în browser, iar randarea pe server nu ajută; cu semnal slab, fiecare navigare care trece pe la server se simte, iar PWA-ul offline e mai greu de configurat.
+
 | Zonă | Tehnologie |
 |---|---|
-| Platformă | **Doar Android** pentru concurs. iOS după concurs: necesită Mac + cont Apple Developer ($99/an). Datele sunt comune, deci se refolosesc. |
-| Interfață | Kotlin, **Jetpack Compose**, Material 3, afișare edge-to-edge, mod întunecat |
-| Arhitectură | MVVM (ViewModel + StateFlow), Navigation Compose, **Koin** |
-| Date | **supabase-kt** (sau Retrofit + kotlinx.serialization), **Room** pentru cache offline, `java.time` |
-| Hartă 2D | Desenată de noi cu **Compose Canvas** din `plan_2d.json` (poligoane), cu zoom și pan prin gesturi |
-| QR | **Google Code Scanner** (ML Kit, fără permisiune pentru cameră) + **Android App Links** pentru `https://<domeniu>/q/<id>` |
-| 3D / AR | **SceneView** (Filament) pentru GLB; **ARCore** (Augmented Images) prin ARSceneView |
-| Traseu | A* scris de noi în Kotlin |
-| Notificări | WorkManager / AlarmManager, locale |
+| Platformă | **Aplicație web (PWA)**, gândită pentru telefon: se instalează cu „Adaugă pe ecranul principal” și se deschide fără bara browserului. Merge pe Android (Chrome) și pe iOS (Safari). |
+| Interfață | **React + TypeScript + Vite**, **React Router**, **Tailwind CSS** + **shadcn/ui**, **motion** pentru animații, **vaul** pentru panoul de jos, mod întunecat, safe areas (`env(safe-area-inset-*)`) |
+| Date | **supabase-js** + **TanStack Query** (afișează ce are în cache, apoi reîmprospătează în fundal) |
+| Rețea și offline | **Întâi pe date, cache ca rezervă (DECIS).** `vite-plugin-pwa` (Workbox): **cache-first** pentru aplicație, plan, SVG și GLB (se schimbă rar); **network-first** pentru orar, cu revenire pe cache. Ultimele date descărcate stau în **IndexedDB** (Dexie). Banner „Offline · date din <dată>”. |
+| Hartă 2D | **SVG** desenat de noi din `plan_2d.json` (poligoane), cu zoom și pan prin gesturi (`react-zoom-pan-pinch` sau gesturi proprii) |
+| QR | Conținut: `https://<domeniu>/q/<id>`. **Camera telefonului deschide direct linkul** (nu mai e nevoie de App Links). În aplicație: `BarcodeDetector` (Chrome Android), cu biblioteca `qr-scanner` ca rezervă (cere permisiune pentru cameră) |
+| 3D | **react-three-fiber** + **drei** pentru GLB, încărcat doar când se deschide modul 3D (P1) |
+| AR | Nu se face pe web (WebXR nu are urmărire de imagini stabilă). Doar în roadmap, într-o aplicație nativă (§14) |
+| Traseu | A* scris de noi în TypeScript |
+| Notificări | Tăiate pentru concurs. P2: Web Push trimis de pe server (pe iOS merge doar cu aplicația instalată pe ecranul principal) |
 | Backend | **Supabase** (Postgres, Auth pentru admin, Storage pentru GLB/SVG/JSON/xlsx, RLS) |
 | Servicii Python | **FastAPI**: importul de orar (openpyxl + SDK `anthropic`, `claude-opus-5-5`), procesarea scanărilor (`glb_to_plan2d.py`, gltf-transform) |
-| Admin web | React + Vite + TypeScript, **minimal**, fără investiție în design. **Pagină de login** (Supabase Auth, e-mail + parolă), iar toate paginile sunt protejate. |
-| Structura repo | Monorepo: `/android`, `/backend`, `/admin-web`, `/data` (scanări, planuri, `seed.json`, `contract.md`), `/pitch` |
+| Admin | **În aceeași aplicație web**, pe rutele `/admin/*`, **minimal**, fără investiție în design. Login cu Supabase Auth (e-mail + parolă), toate paginile protejate. Folosește aceeași componentă de hartă ca studentul (editorul de pin-uri). |
+| Găzduire | **Vercel** (site static, HTTPS, obligatoriu pentru PWA și cameră). Domeniul: DESCHIS (merge și `*.vercel.app` pentru concurs) |
+| Structura repo | Monorepo: `/web` (student + admin), `/backend`, `/data` (scanări, planuri, `seed.json`, `contract.md`), `/pitch` |
 
 ---
 
-## 10. Principii UX pentru Android (prioritate maximă a utilizatorului)
+## 10. Principii UX pe telefon (prioritate maximă a utilizatorului)
 
-> „Pe partea de web nu mă interesează așa de tare, dar UX-ul de pe Android să fie top.” — DECIS
+> „Pe partea de web nu mă interesează așa de tare, dar UX-ul de pe Android să fie top.” — DECIS. De la trecerea pe PWA (§9): **experiența studentului pe telefon** trebuie să fie top. Admin-ul rămâne minimal. Aplicația trebuie să se simtă nativă: fără bara browserului, safe areas, gesturi, tranziții, fără zoom accidental.
 
 1. **Primul ecran răspunde la „unde am ora următoare?”.** Cardul „Următorul curs” + „Du-mă acolo” se văd fără scroll.
 2. **Căutarea e primul element** de pe Acasă și înțelege coduri, abrevieri, profesori și materii.
 3. **Orice sală e la maximum 2 tap-uri de hartă.** Pagina sălii e aceeași, indiferent de unde ajungi la ea.
 4. **Panoul de jos (bottom sheet) are trei niveluri:** închis (status într-un rând) → pe jumătate (ziua) → complet (calendar).
-5. **Feedback clar:** vibrație scurtă + animație spre „Ești aici” la scanarea QR; puls pe pin-ul cursului live; tranziții fluide între ecrane.
+5. **Feedback clar:** vibrație scurtă (`navigator.vibrate`, doar pe Android) + animație spre „Ești aici” la scanarea QR; puls pe pin-ul cursului live; tranziții fluide între ecrane.
 6. **Mesaje pentru stările goale și offline:** „Nicio oră acum · următoarea la 14:00”, „Offline · date din 21 nov”, „Sala e în altă clădire → Navighează”.
-7. **Accesibilitate:** zone de atingere ≥ 48dp, contrast AA, mărirea fontului fără ca layout-ul să se strice, etichete pentru TalkBack, butoanele importante în jumătatea de jos a ecranului.
-8. **Performanță:** pornire la rece < 2 s, harta la 60 fps, totul funcționează offline.
+7. **Accesibilitate:** zone de atingere ≥ 48px, contrast AA, mărirea fontului fără ca layout-ul să se strice, etichete pentru cititoarele de ecran (TalkBack / VoiceOver), butoanele importante în jumătatea de jos a ecranului.
+8. **Performanță:** pornire < 2 s după prima vizită (din cache), harta la 60 fps, pachet JS mic (3D încărcat separat), preîncărcare pentru sala următoare și etajul ei. Fără semnal merge pe ultimele date.
 9. **Limbaj:** română, etichete scurte. Codurile oficiale (`B528b`) apar mereu împreună cu explicația („Corp B · etaj 5”).
-10. Designul se face în **Claude Design**, apoi se transpune în tema Material 3 + o bibliotecă de componente Compose: `NextClassCard`, `RoomSheet`, `RoomPin`, `FloorChips`, `RouteSteps`, `TimetableDay`, `SearchBar`.
+10. Designul se face în **Claude Design**, apoi se transpune în tema Tailwind (tokeni de culoare, fonturi) + o bibliotecă de componente React: `NextClassCard`, `RoomSheet`, `RoomPin`, `FloorChips`, `RouteSteps`, `TimetableDay`, `SearchBar`.
 
 ---
 
@@ -364,17 +368,17 @@ Exemplu de intrare reală (`An 1`, celula combinată `H33:H34`):
 
 | # | Rol | Responsabilitate |
 |---|---|---|
-| 1 | **Android: aplicație principală** | Arhitectură, date, offline, hartă 2D, orar, căutare, integrare; responsabil de ramura principală a aplicației |
-| 2 | **Localizare, apoi 3D/AR** | QR V1 + testul în clădire, testul Wi-Fi, apoi plimbarea 3D și AR |
+| 1 | **Aplicația web: partea principală** | Arhitectură, date, cache, orar, căutare, integrare; responsabil de ramura principală a aplicației |
+| 2 | **Hartă, traseu, localizare, apoi 3D** | Harta 2D, A*, QR V1 + testul în clădire, apoi plimbarea 3D |
 | 3 | **Backend + admin minimal** | Supabase, RLS, import Excel + AI, calendar, editorul de pin-uri / noduri / QR |
-| 4 | **Design UX/UI Android (normă întreagă)** | Machete în Claude Design, sistemul vizual, **implementarea componentelor în Compose** alături de 1 |
+| 4 | **Design UX/UI (normă întreagă)** | Machete în Claude Design, sistemul vizual, **implementarea componentelor în React** alături de 1 |
 | 5 | **Date, teste, pitch** | Scanări, planuri 2D, `seed.json`, afișe QR, teste cu studenți, pitch, video de rezervă |
 
 ### Faze (DECIS)
 0. **Prima oră, toată echipa:** `data/contract.md` (formatele din §8), `data/seed.json` (etajul 6 din corpul B, ~10 săli inclusiv B623, câteva noduri, 2 ancore QR, ~30 de ore din orar), scenariul de demo. De aici înainte, toți lucrează pe date de test, fără să se aștepte unii pe alții.
 1. **Hartă 2D integrată în aplicație + testul QR V1 în clădire.**
-2. **Decizia despre Wi-Fi.** Dacă QR V1 nu convinge la teste, Wi-Fi intră ca rezervă. Dacă QR merge, Wi-Fi rămâne doar bonus pentru detectarea etajului.
-3. **3D și AR**, ca bonusuri. AR stă sub un feature flag și apare în demo doar dacă merge sigur.
+2. **Testul de semnal în clădire** (holuri, scări): decide cât de mult investim în cache (§13). Wi-Fi a ieșit odată cu trecerea pe web (§9).
+3. **3D**, ca bonus, sub un feature flag. Apare în demo doar dacă merge sigur.
 - Ședințe scurte de 10 minute la fiecare 3–4 ore. **Înghețarea funcțiilor** înainte de ultima rundă de teste și repetiții.
 
 ---
@@ -390,8 +394,9 @@ Ordinea completă, pentru interviu sau pentru video. În pitch intră doar pași
 3. Scanează codul QR de la intrarea pe etaj; harta arată „Ești aici”.
 4. Caută `B623`, apasă „Du-mă acolo” și vede traseul pas cu pas.
 5. Apasă pe pin și vede ce curs e acum și ce urmează azi.
-6. *Bonus:* plimbare 3D sau săgeți AR.
-- **Plan de rezervă:** dacă AR-ul nu e gata, demo-ul se oprește la pasul 5 + 3D și rămâne complet. Există și un video înregistrat.
+6. *Bonus:* plimbare 3D.
+- Juriul poate deschide aplicația pe telefonul lui, dintr-un QR pe slide.
+- **Plan de rezervă:** dacă 3D-ul nu e gata, demo-ul se oprește la pasul 5 și rămâne complet. Există și un video înregistrat.
 
 ### Validare (DE VALIDAT, praguri stabilite înainte de teste)
 - **Cel puțin 5 studenți din anul I**, teste pe sarcini („Găsește unde ai următorul curs și arată-mi drumul”).
@@ -411,9 +416,11 @@ Ordinea completă, pentru interviu sau pentru video. În pitch intră doar pași
 | Publicarea interiorului clădirii fără acord | Acordul facultății înainte de publicare. Scanări fără fețe și fără date personale de pe avizier. |
 | Scanările se deformează pe coridoare lungi | Scanări pe bucăți, verificate cu distanțe măsurate. Ancorele QR corectează eroarea locală. |
 | Formatul Excel se schimbă de la an la an | Parser fără poziții fixe + AI + verificare umană |
-| Wi-Fi: Android limitează scanările la 4 / 2 min; pe iOS e imposibil | Wi-Fi doar ca bonus sau rezervă, nu ca bază |
-| ARCore recunoaște greu un QR simplu | Afișe cu grafică unică, verificate cu `arcoreimg` |
-| Semnal slab pe holuri | Offline-first (Room) |
+| Wi-Fi: browserul nu poate scana rețelele | Wi-Fi scos din concurs; doar într-o aplicație nativă (roadmap) |
+| AR: nu se poate pe web; ARCore recunoaște greu un QR simplu | AR doar în roadmap (aplicație nativă), cu afișe cu grafică unică, verificate cu `arcoreimg` |
+| Semnal slab pe holuri (**DE VALIDAT** pe etajul 6B: semnal mobil + eduroam pe holuri și la scări) | Pachet mic + cache pentru aplicație și ultimele date (§8, §9) |
+| Wi-Fi-ul din sala de concurs cade la demo | Aplicația pornește din cache cu datele din `seed.json`; video de rezervă |
+| Aplicația web nu se simte „aplicație” | Instalată pe ecranul principal (fără bara browserului), safe areas, gesturi, tranziții (§10) |
 | Tema anunțată de organizatori nu se potrivește | Confirmare la începutul concursului |
 | Cheia API expusă | Apelurile AI se fac doar din backend |
 
@@ -421,7 +428,7 @@ Ordinea completă, pentru interviu sau pentru video. În pitch intră doar pași
 
 ## 14. Roadmap (după concurs)
 1. Toate etajele corpului B, apoi corpurile A, C și D.
-2. Aplicația iOS (Swift / ARKit), pe aceleași date.
+2. Aplicație nativă (Android / iOS) doar pentru ce nu se poate pe web: AR, Wi-Fi, notificări locale. Pe aceleași date.
 3. Orarul sesiunii de examene; săli libere acum; puncte utile complete.
 4. Alte facultăți UPT, apoi alte universități din România (model **B2B2C**: universitatea plătește sau sponsorizează, studenții folosesc gratuit). Un kit de onboarding pentru universități: ghid de scanare + import de orar.
 5. Localizare vizuală fără marcaje (VPS: Immersal / MultiSet).
@@ -433,7 +440,7 @@ Ordinea completă, pentru interviu sau pentru video. În pitch intră doar pași
 - Etajele de scanat pentru demo și sursa numerelor de sală pentru fiecare ușă (poze cu plăcuțele, planul de evacuare).
 - Ce alte etaje se scanează pentru demo (ex. parterul corpului B, ca punct de plecare, + etajul 6).
 - Data de început a semestrului I 2026/2027, numărul de săptămâni didactice și vacanțele.
-- Domeniul pentru link-urile QR și App Links.
+- Domeniul aplicației (și al link-urilor din codurile QR). Pentru concurs ajunge `*.vercel.app`, dar afișele printate rămân legate de el.
 - Lista completă de abrevieri per foaie (se generează la import).
 
 ---
