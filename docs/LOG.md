@@ -8,6 +8,31 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 
 <!-- INTRĂRI NOI AICI: cele mai noi primele -->
 
+## 2026-11-21 14:31 · Stefanita · sesiune 89a03c40
+**Rol:** Design (pregătirea implementării web)
+**Ce am făcut:**
+- Am scris promptul de implementare pentru toată interfața studentului: `docs/prompts/web-app.md`. Are 7 faze, fiecare cu verificare (build + capturi la 390×844 + fluxul de demo). La final are review-ul obligatoriu (§11): tabel cerință → dovadă, verificări automate, review cu un subagent și raport cu abaterile de la prompt.
+- Am completat în `docs/design/HANDOFF-design.md` cele 4 fundaluri alese: Planul-fantomă, Grila care curge, Clădirea care se rotește, Etajul uriaș.
+- Promptul nu a fost rulat încă. Codul din `web/` nu s-a schimbat în sesiunea asta.
+
+**Decizii:**
+- Aplicația se construiește în `web/`. Codul lui Paul (scena 3D, A* din `navigation.ts`) se portează acolo, iar `web-3d/` rămâne neatins.
+- Harta 2D e în SVG, din `floor.json`. 3D-ul e scena lui Paul, încărcată doar la cerere (lazy).
+- Sesiunea de cod lucrează și în zonele lui A și B (`web/src/app`, `features/{map,routing,scene3d}`), la cererea lui Stefanita.
+- Date mockup, fără Supabase și fără import de orar. Sălile sunt numele din `door-labels.json` (B625 real, Lab 1–7 provizorii).
+- Etajul 6 e real, etajul 5 e mockup și e marcat „DE ADĂUGAT PE BUNE”.
+- Traseul pleacă din Scări 1 / Scări 2 / Lift, plus linkurile QR `/q/scari-1`, `/q/scari-2`, `/q/lift`.
+- Modul demo (`?demo=1`) fixează ceasul pe marți, 09:50. Onboarding-ul are 3 pași, cu grupe mockup.
+- Pe Acasă apare Planul-fantomă, pe Orar Grila care curge.
+
+**Ce a rămas:**
+- [ ] De rulat `docs/prompts/web-app.md` într-o sesiune nouă, de la faza 1.
+- [ ] De adăugat pe bune etajul 5 (scanare + `floor.json` propriu); acum e mockup.
+- [ ] Codurile reale ale sălilor în loc de Lab 1–7 (lista lui D → `web-3d/scripts/door-labels.json`).
+- [ ] Orarul real (importul lui C) în locul celui mockup.
+
+**Fișiere:** `docs/prompts/web-app.md`, `docs/design/HANDOFF-design.md`, `docs/LOG.md`
+
 ## 2026-11-21 12:11 · PaulIacoblev · sesiune 6f298005
 **Rol:** B, hartă + traseu (prototip `web-3d/`)
 **Ce am făcut:**
