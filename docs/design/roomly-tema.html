@@ -1,0 +1,475 @@
+<title>Tema Roomly</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:wght@400;600;700;800&family=Sora:wght@400;600;700;800&family=Archivo:wght@400;600;700;800;900&family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: panou de control în stânga (lipicios pe desktop), trei telefoane live în dreapta, apoi tipografie + contrast + promptul generat. Pagina e neutră ca să nu concureze cu tema din telefoane. */
+:root{
+  --bg:#EEF0F3; --panel:#FFFFFF; --field:#F5F6F8; --fg:#12171E; --muted:#5D6773; --line:#D8DDE3; --accent:#1F49C7; --bezel:#14181E;
+  --ok:#1F7A4D; --bad:#B4372A;
+  --ui:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0C0F13;--panel:#151A20;--field:#1C2229;--fg:#E6EAEF;--muted:#98A2AE;--line:#29313B;--accent:#9DB2FF;--bezel:#04060A;--ok:#5FD39A;--bad:#FF8A7A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C0F13;--panel:#151A20;--field:#1C2229;--fg:#E6EAEF;--muted:#98A2AE;--line:#29313B;--accent:#9DB2FF;--bezel:#04060A;--ok:#5FD39A;--bad:#FF8A7A;color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:14px;line-height:1.5}
+.app{max-width:1520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:920px){.app{grid-template-columns:1fr}.controls{order:2;position:static!important;max-height:none!important}.main{order:1}}
+h1{font-size:1.5rem;margin:0;font-weight:800;letter-spacing:-.01em}
+h2{font-size:.78rem;margin:0;font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+p{margin:0}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.controls{position:sticky;top:max(12px,env(safe-area-inset-top,0px));max-height:calc(100vh - 24px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:18px}
+.grp{display:grid;gap:10px}
+.presets{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.preset{border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:8px;text-align:left;display:grid;gap:5px;min-height:44px}
+.preset[aria-pressed="true"]{border-color:var(--fg)}
+.preset b{font-size:.85rem}
+.sw4{display:flex;gap:3px}.sw4 i{width:14px;height:14px;border-radius:4px;border:1px solid rgba(127,127,127,.3)}
+.seg{display:flex;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:7px;padding:7px;font-weight:600;min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px}
+.row label{font-size:.86rem}
+.crow{display:grid;grid-template-columns:1fr auto 64px;align-items:center;gap:8px}
+.crow code{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+input[type=color]{width:34px;height:28px;border:1px solid var(--line);border-radius:6px;padding:0;background:none;cursor:pointer}
+select{font:inherit;background:var(--field);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:34px;max-width:170px}
+input[type=range]{width:150px;accent-color:var(--accent)}
+.val{font-family:var(--mono);font-size:.74rem;color:var(--muted);min-width:40px;text-align:right}
+.rng{display:flex;align-items:center;gap:6px}
+details summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--muted)}
+details[open] summary{margin-bottom:10px}
+.hint{font-size:.78rem;color:var(--muted)}
+.main{display:grid;gap:22px;min-width:0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+.head p{color:var(--muted);max-width:66ch}
+.play{border:0;background:var(--fg);color:var(--bg);border-radius:999px;padding:10px 18px;font-weight:700;min-height:44px}
+.phones{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 12px}
+.pcol{display:grid;gap:8px;justify-items:center;text-align:center}
+.pcol .cap{font-size:.8rem;color:var(--muted);max-width:240px}
+.pcol .cap b{color:var(--fg)}
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.cr{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;font-size:.86rem;padding:6px 0;border-bottom:1px dashed var(--line)}
+.cr:last-child{border-bottom:0}
+.pair{display:flex}.pair i{width:20px;height:20px;border-radius:5px;border:1px solid rgba(127,127,127,.35)}.pair i+i{margin-left:-6px}
+.ratio{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.badge{font-family:var(--mono);font-size:.7rem;font-weight:600;padding:2px 7px;border-radius:999px;border:1px solid currentColor}
+.badge.ok{color:var(--ok)}.badge.bad{color:var(--bad)}
+.out{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;word-break:break-word;max-height:420px;overflow:auto;margin:0}
+.copy{border:0;background:var(--accent);color:var(--panel);border-radius:999px;padding:9px 16px;font-weight:700;min-height:40px;justify-self:start}
+
+/* ---------- Telefoane: totul vine din variabilele --p-* puse de JS pe #pv ---------- */
+.phone{text-align:left;width:248px;max-width:100%;aspect-ratio:9/19;border:8px solid var(--bezel);border-radius:34px;overflow:hidden;position:relative;color:var(--p-ink);font-family:var(--p-body);font-size:var(--p-size);box-shadow:0 22px 40px -26px rgba(0,0,0,.55);background:var(--p-bg)}
+.paint{background-color:var(--p-bg);background-image:var(--p-pattern);background-size:var(--p-psize)}
+.scr{position:absolute;inset:0;overflow:hidden}
+.sb{position:absolute;top:7px;left:16px;right:16px;display:flex;justify-content:space-between;font-size:10px;font-weight:700;opacity:.75;z-index:5;font-family:var(--p-body)}
+.disp{font-family:var(--p-disp);font-weight:var(--p-w);letter-spacing:-.01em;line-height:1.1}
+.surf{background:var(--p-surface);border-radius:var(--p-r);box-shadow:var(--p-shadow)}
+.plate{display:inline-flex;align-items:center;background:var(--p-accent);color:var(--p-on);font-family:var(--p-code);font-weight:800;border-radius:calc(var(--p-r) * .5);padding:2px 7px;letter-spacing:.02em;line-height:1.3}
+.btn{background:var(--p-accent);color:var(--p-on);border:0;border-radius:calc(var(--p-r) * .7);padding:9px;font-weight:700;text-align:center;font-family:var(--p-body);font-size:.85em}
+.muted{color:var(--p-muted)}
+.home{position:absolute;inset:0;padding:30px 12px 62px;display:flex;flex-direction:column;gap:10px}
+.hello{font-size:.78em;color:var(--p-muted)}
+.hello b{display:block;color:var(--p-ink);font-size:1.45em}
+.srch{padding:9px 11px;font-size:.78em;color:var(--p-muted);border:1px solid color-mix(in srgb,var(--p-ink) 10%,transparent)}
+.nc{padding:12px;display:grid;gap:7px;cursor:pointer;border:1px solid color-mix(in srgb,var(--p-ink) 8%,transparent)}
+.nc .k{font-size:.66em;text-transform:uppercase;letter-spacing:.09em;color:var(--p-muted);font-weight:700}
+.nc .t{font-size:1.08em}
+.nc .wh{display:flex;align-items:center;gap:7px;font-size:.76em;color:var(--p-muted);min-height:1.6em}
+.dec{font-family:var(--p-code);white-space:pre}
+.lst{display:grid;gap:5px;font-size:.74em}
+.lst div{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:7px 9px}
+.lst .plate{font-size:.9em}
+.tabs{position:absolute;left:0;right:0;bottom:0;height:54px;background:var(--p-surface);display:flex;justify-content:space-around;align-items:center;border-top:1px solid color-mix(in srgb,var(--p-ink) 8%,transparent);font-size:.68em;font-weight:700;color:var(--p-muted)}
+.tabs span{display:grid;justify-items:center;gap:3px}
+.tabs span i{width:20px;height:4px;border-radius:2px;background:currentColor;opacity:.35}
+.tabs span.on{color:var(--p-accent)}.tabs span.on i{opacity:1}
+[data-mode] .tabs span.on{color:var(--p-tab)}
+.ex{position:absolute;inset:0;background:var(--p-bg);visibility:hidden;display:flex;flex-direction:column;z-index:3}
+.ex .hd{padding:30px 12px 10px;display:flex;align-items:center;gap:8px;font-size:.8em;background:var(--p-surface)}
+.back{border:0;background:var(--p-bg);color:var(--p-ink);border-radius:calc(var(--p-r)*.6);width:32px;height:32px;font-weight:800;flex:none}
+.ex .mw{position:relative;flex:1}
+.mapsvg{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* plan */
+.pf{fill:var(--p-floor)}
+.pw{fill:none;stroke:var(--p-wall);stroke-width:var(--p-wallw);stroke-linejoin:round;stroke-linecap:round}
+.pd{fill:none;stroke:var(--p-door);stroke-width:3.2}
+.pm{fill:var(--p-mat)}
+.rc{fill:none;stroke:var(--p-wall);stroke-width:calc(var(--p-routew) + 3px);stroke-linecap:round;stroke-linejoin:round;opacity:var(--p-casing)}
+.rt{fill:none;stroke:var(--p-route);stroke-width:var(--p-routew);stroke-linecap:round;stroke-linejoin:round;filter:var(--p-glow)}
+.dot{fill:var(--p-accent);stroke:var(--p-surface);stroke-width:2}
+.pinb{fill:var(--p-accent)}
+.pint{fill:var(--p-on);font-weight:800;font-size:6.5px;text-anchor:middle;font-family:var(--p-code)}
+.ring{fill:none;stroke:var(--p-live);stroke-width:1.3;transform-box:fill-box;transform-origin:center;animation:pulse calc(2.4s / var(--p-speed)) cubic-bezier(.2,.6,.3,1) infinite}
+.ring.r2{animation-delay:calc(.8s / var(--p-speed))}.ring.r3{animation-delay:calc(1.6s / var(--p-speed))}
+@keyframes pulse{from{transform:scale(1);opacity:.8}to{transform:scale(3.4);opacity:0}}
+.livedot{width:8px;height:8px;border-radius:50%;background:var(--p-live);flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--p-live) 28%,transparent)}
+.topf{position:absolute;top:28px;left:10px;right:10px;z-index:2}
+.fch{position:absolute;right:10px;top:84px;display:grid;gap:3px;padding:3px;z-index:2}
+.fch button{width:34px;height:34px;border:0;border-radius:calc(var(--p-r)*.5);background:transparent;color:var(--p-ink);font-family:var(--p-code);font-weight:800}
+.fch button[aria-pressed="true"]{background:var(--p-accent);color:var(--p-on)}
+.b3d{position:absolute;left:10px;top:84px;z-index:2;border:0;padding:8px 10px;font-weight:700;font-size:.74em;color:var(--p-ink);font-family:var(--p-body)}
+.pill{position:absolute;left:10px;right:10px;bottom:12px;padding:10px 12px;display:flex;align-items:center;gap:9px;font-size:.78em;z-index:2}
+.slv{position:absolute;inset:0;z-index:4;visibility:hidden}
+.slv .hd3{position:absolute;top:28px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center;z-index:2;font-size:.78em;padding:8px 10px}
+.persp{position:absolute;inset:0;perspective:900px}
+.stk{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(57deg) rotateZ(-36deg)}
+.slab{position:absolute;left:50%;top:50%;width:44%;aspect-ratio:193/396;transform-style:preserve-3d;cursor:pointer}
+.slab svg{width:100%;height:100%;display:block;overflow:visible}
+.slab .sbg{fill:color-mix(in srgb,var(--p-surface) 80%,transparent);stroke:var(--p-wall);stroke-width:2}
+.slab .tg{position:absolute;left:-38%;top:6%;font-family:var(--p-code);font-weight:800;font-size:11px;background:var(--p-surface);color:var(--p-ink);border-radius:calc(var(--p-r)*.4);padding:2px 6px;white-space:nowrap;box-shadow:var(--p-shadow)}
+.slab:hover .sbg{stroke:var(--p-accent)}
+/* ușa */
+.dscene{position:absolute;left:0;right:0;top:0;height:56%;background:var(--p-floor)}
+.dframe{position:absolute;left:21%;right:21%;top:20%;bottom:0;border:6px solid var(--p-wall);border-bottom:0;border-radius:4px 4px 0 0}
+.dway{position:absolute;left:calc(21% + 6px);right:calc(21% + 6px);top:calc(20% + 6px);bottom:0;perspective:700px}
+.room{position:absolute;inset:0;background:var(--p-surface);display:grid;place-content:center;justify-items:center;gap:6px;text-align:center;padding:8px}
+.room svg{width:46px;height:46px}
+.room .rk{font-size:.62em;text-transform:uppercase;letter-spacing:.1em;color:var(--p-muted);font-weight:700}
+.door{position:absolute;inset:0;transform-origin:left center;background:var(--p-door);display:grid;justify-items:center;align-content:start;padding-top:22%;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--p-wall) 50%,transparent)}
+.door .plate{font-size:1.15em;padding:4px 10px}
+.handle{position:absolute;right:9%;top:54%;width:24%;height:6px;border-radius:3px;background:var(--p-wall);transform-origin:12% 50%}
+.dsheet{position:absolute;left:0;right:0;bottom:0;top:52%;padding:12px 12px 14px;display:grid;gap:8px;align-content:start;border-radius:calc(var(--p-r) + 6px) calc(var(--p-r) + 6px) 0 0;background:var(--p-surface);box-shadow:0 -8px 22px -12px rgba(0,0,0,.35)}
+.grab{width:34px;height:4px;border-radius:2px;background:var(--p-muted);opacity:.45;justify-self:center}
+.dsheet .r{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:.78em}
+.tl{display:grid;gap:4px;font-size:.72em}
+.tl div{display:flex;justify-content:space-between;gap:6px;padding:6px 8px;border-radius:calc(var(--p-r)*.5);background:var(--p-bg)}
+.tl div.now{background:color-mix(in srgb,var(--p-live) 16%,var(--p-bg))}
+/* tipografie */
+.ty{border-radius:12px;padding:16px;display:grid;gap:10px;background:var(--p-bg);color:var(--p-ink)}
+.ty .h{font-size:1.9rem}
+.ty .b{font-family:var(--p-body);font-size:var(--p-size);max-width:52ch}
+.ty .c{font-family:var(--p-code);font-weight:700;font-size:1.05rem}
+.ty .dia{font-family:var(--p-body);font-size:.95rem;color:var(--p-muted)}
+.fn{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.ring{animation:none;opacity:.35}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><g id="plan"><path class="pf" fill-rule="evenodd" d="M164.4 0.0 180.9 0.0 180.9 176.9 170.7 183.1 170.7 211.0 167.9 214.7 133.9 214.7 133.9 207.2 122.7 207.2 122.7 226.7 118.8 239.9 118.8 282.8 113.0 285.5 87.0 285.5 84.1 282.4 84.1 234.6 42.6 234.6 42.6 349.0 43.7 352.9 43.7 384.1 28.5 384.1 27.0 382.2 27.0 223.1 30.0 216.0 46.7 216.0 46.7 183.9 42.4 181.0 14.4 181.0 10.4 182.4 0.0 160.6 0.0 145.6 3.9 142.9 20.8 142.9 20.8 135.1 39.8 135.1 44.8 140.8 58.8 140.8 62.5 147.6 62.5 159.7 66.2 162.6 71.1 158.8 105.5 158.8 105.5 139.4 115.8 139.4 122.5 144.8 122.5 156.8 126.1 159.9 164.4 159.9Z"/><path class="pw" d="M164.4 0.0 180.9 0.0 180.9 176.9 170.7 183.1 170.7 211.0 167.9 214.7 133.9 214.7 133.9 207.2 122.7 207.2 122.7 226.7 118.8 239.9 118.8 282.8 113.0 285.5 87.0 285.5 84.1 282.4 84.1 234.6 42.6 234.6 42.6 349.0 43.7 352.9 43.7 384.1 28.5 384.1 27.0 382.2 27.0 223.1 30.0 216.0 46.7 216.0 46.7 183.9 42.4 181.0 14.4 181.0 10.4 182.4 0.0 160.6 0.0 145.6 3.9 142.9 20.8 142.9 20.8 135.1 39.8 135.1 44.8 140.8 58.8 140.8 62.5 147.6 62.5 159.7 66.2 162.6 71.1 158.8 105.5 158.8 105.5 139.4 115.8 139.4 122.5 144.8 122.5 156.8 126.1 159.9 164.4 159.9 164.4 0.0Z"/><path class="pm" d="M174.4 0.0 180.4 0.0 180.4 4.5 174.4 4.5Z"/><path class="pd" data-id="D01" d="M174.4 0.0 L180.4 0.0"/><path class="pm" d="M180.9 32.0 180.9 45.0 176.4 45.0 176.4 32.0Z"/><path class="pd" data-id="D02" d="M180.9 32.0 L180.9 45.0"/><path class="pm" d="M180.9 69.5 180.9 81.5 176.4 81.5 176.4 69.5Z"/><path class="pd" data-id="D03" d="M180.9 69.5 L180.9 81.5"/><path class="pm" d="M180.9 148.4 180.9 154.9 176.4 154.9 176.4 148.4Z"/><path class="pd" data-id="D04" d="M180.9 148.4 L180.9 154.9"/><path class="pm" d="M131.8 207.2 123.3 207.2 123.3 202.7 131.8 202.7Z"/><path class="pd" data-id="D05" d="M131.8 207.2 L123.3 207.2"/><path class="pm" d="M122.7 207.2 122.7 213.2 118.2 213.2 118.2 207.2Z"/><path class="pd" data-id="D06" d="M122.7 207.2 L122.7 213.2"/><path class="pm" d="M113.0 285.5 107.0 285.5 107.0 281.0 113.0 281.0Z"/><path class="pd" data-id="D07" d="M113.0 285.5 L107.0 285.5"/><path class="pm" d="M95.0 285.5 88.5 285.5 88.5 281.0 95.0 281.0Z"/><path class="pd" data-id="D08" d="M95.0 285.5 L88.5 285.5"/><path class="pm" d="M42.6 260.1 42.6 267.6 38.1 267.6 38.1 260.1Z"/><path class="pd" data-id="D09" d="M42.6 260.1 L42.6 267.6"/><path class="pm" d="M27.0 381.6 27.0 373.1 31.5 373.1 31.5 381.6Z"/><path class="pd" data-id="D10" d="M27.0 381.6 L27.0 373.1"/><path class="pm" d="M27.0 325.1 27.0 311.6 31.5 311.6 31.5 325.1Z"/><path class="pd" data-id="D11" d="M27.0 325.1 L27.0 311.6"/><path class="pm" d="M27.0 251.6 27.0 235.2 31.5 235.2 31.5 251.6Z"/><path class="pd" data-id="D12" d="M27.0 251.6 L27.0 235.2"/><path class="pm" d="M52.3 140.8 58.3 140.8 58.3 145.3 52.3 145.3Z"/><path class="pd" data-id="D13" d="M52.3 140.8 L58.3 140.8"/><path class="pm" d="M62.5 148.6 62.5 154.6 58.0 154.6 58.0 148.6Z"/><path class="pd" data-id="D14" d="M62.5 148.6 L62.5 154.6"/><path class="pm" d="M105.5 153.3 105.5 146.8 110.0 146.8 110.0 153.3Z"/><path class="pd" data-id="D15" d="M105.5 153.3 L105.5 146.8"/><path class="pm" d="M143.5 159.9 160.0 159.9 160.0 164.4 143.5 164.4Z"/><path class="pd" data-id="D16" d="M143.5 159.9 L160.0 159.9"/><path class="pm" d="M164.4 136.4 164.4 130.4 168.9 130.4 168.9 136.4Z"/><path class="pd" data-id="D17" d="M164.4 136.4 L164.4 130.4"/><path class="pm" d="M164.4 116.9 164.4 109.9 168.9 109.9 168.9 116.9Z"/><path class="pd" data-id="D18" d="M164.4 116.9 L164.4 109.9"/><path class="pm" d="M164.4 43.4 164.4 30.9 168.9 30.9 168.9 43.4Z"/><path class="pd" data-id="D19" d="M164.4 43.4 L164.4 30.9"/><path class="pm" d="M164.4 7.0 164.4 1.0 168.9 1.0 168.9 7.0Z"/><path class="pd" data-id="D20" d="M164.4 7.0 L164.4 1.0"/></g></defs></svg>
+
+<div class="app">
+<aside class="controls" aria-label="Setări temă">
+  <div class="grp"><h1>Tema Roomly</h1><p class="hint">Alege un preset, apoi ajustează. Telefoanele se schimbă pe loc, iar promptul de jos se rescrie singur.</p></div>
+
+  <div class="grp"><h2>Preset</h2><div class="presets" id="presets"></div></div>
+
+  <div class="grp"><h2>Mod</h2>
+    <div class="seg" role="group" aria-label="Mod de culoare"><button id="m-light" aria-pressed="true">Luminos</button><button id="m-dark" aria-pressed="false">Întunecat</button></div>
+    <p class="hint">Culorile de mai jos se aplică modului ales aici.</p></div>
+
+  <div class="grp"><h2>Culori</h2><div id="colors-main"></div>
+    <h2 style="margin-top:6px">Harta</h2><div id="colors-map"></div>
+    <details><summary>Mai multe culori</summary><div id="colors-adv"></div></details></div>
+
+  <div class="grp"><h2>Fundal</h2>
+    <div class="row"><label for="pattern">Model</label><select id="pattern"><option value="plain">Simplu</option><option value="grid">Grilă milimetrică</option><option value="dots">Puncte</option><option value="glow">Lumină de sus</option></select></div>
+    <div class="row"><label for="patternAmt">Intensitate</label><span class="rng"><input type="range" id="patternAmt" min="0" max="100" step="1"><span class="val" id="v-patternAmt"></span></span></div></div>
+
+  <div class="grp"><h2>Fonturi</h2>
+    <div class="row"><label for="fontDisplay">Titluri</label><select id="fontDisplay"></select></div>
+    <div class="row"><label for="fontBody">Text</label><select id="fontBody"></select></div>
+    <div class="row"><label for="fontCode">Coduri de sală</label><select id="fontCode"></select></div>
+    <div class="row"><label for="weight">Greutate titluri</label><span class="rng"><input type="range" id="weight" min="500" max="900" step="100"><span class="val" id="v-weight"></span></span></div>
+    <div class="row"><label for="size">Mărime text</label><span class="rng"><input type="range" id="size" min="13" max="18" step="0.5"><span class="val" id="v-size"></span></span></div></div>
+
+  <div class="grp"><h2>Formă</h2>
+    <div class="row"><label for="radius">Colțuri</label><span class="rng"><input type="range" id="radius" min="0" max="24" step="1"><span class="val" id="v-radius"></span></span></div>
+    <div class="row"><label for="shadow">Umbre</label><select id="shadow"><option value="none">Fără</option><option value="soft">Discrete</option><option value="strong">Pronunțate</option></select></div></div>
+
+  <div class="grp"><h2>Hartă și mișcare</h2>
+    <div class="row"><label for="wallw">Grosime pereți</label><span class="rng"><input type="range" id="wallw" min="0.6" max="3" step="0.1"><span class="val" id="v-wallw"></span></span></div>
+    <div class="row"><label for="routew">Grosime traseu</label><span class="rng"><input type="range" id="routew" min="2" max="7" step="0.2"><span class="val" id="v-routew"></span></span></div>
+    <div class="row"><label for="casing">Contur pe traseu</label><input type="checkbox" id="casing"></div>
+    <div class="row"><label for="glow">Traseu luminos</label><input type="checkbox" id="glow"></div>
+    <div class="row"><label for="speed">Viteză animații</label><span class="rng"><input type="range" id="speed" min="0.5" max="1.6" step="0.1"><span class="val" id="v-speed"></span></span></div></div>
+</aside>
+
+<main class="main">
+  <div class="head">
+    <div style="display:grid;gap:6px"><h2>Previzualizare live</h2><p>Planul e etajul real din <code>web-3d/src/map/floor.json</code>, cu cele 20 de uși detectate. B623 e pusă pe ușa D20 ca exemplu, iar orarul e tot exemplu.</p></div>
+    <button class="play" id="play">Rulează animațiile</button>
+  </div>
+  <div id="pv" class="phones">
+    <div class="pcol"><div class="phone paint" id="phHome"></div><p class="cap"><b>Acasă</b> · codul se decriptează; atinge cardul ca să devină hartă</p></div>
+    <div class="pcol"><div class="phone paint" id="phMap"></div><p class="cap"><b>Hartă</b> · traseul se desenează, pulsul arată cursul live; apasă „Etaje 3D”, apoi un etaj</p></div>
+    <div class="pcol"><div class="phone paint" id="phRoom"></div><p class="cap"><b>Ai ajuns</b> · ușa se deschide și arată ce e în sală</p></div>
+  </div>
+  <div class="cards2">
+    <div class="box"><h2>Tipografie</h2>
+      <div class="ty paint" id="ty"><span class="h disp">Unde e sala B623?</span><p class="b">Ai curs de programare la 10:00. Pleacă la 09:54: sunt 29 m până la ușă, pe holul de nord-est.</p><span class="c">B528b · B623 · SPM202 · M304</span><span class="dia">Diacritice: ă â î ș ț Ă Â Î Ș Ț · Șase săli în corpul B, la țintă</span></div>
+      <p class="fn" id="fontnames"></p></div>
+    <div class="box"><h2>Contrast (WCAG)</h2><div id="contrast"></div><p class="hint">Textul cere minimum 4,5:1. Traseul, pereții și butoanele cer minimum 3:1 față de ce e în spatele lor.</p></div>
+  </div>
+  <div class="box"><div class="head"><h2>Prompt pentru Claude</h2><button class="copy" id="copy">Copiază promptul</button></div><pre class="out" id="out"></pre></div>
+</main>
+</div>
+
+<script>
+(function(){
+"use strict";
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=(s,e=document)=>e.querySelector(s), $$=(s,e=document)=>[...e.querySelectorAll(s)];
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const easeIO=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, easeOut=t=>1-Math.pow(1-t,3);
+let SPEED=1;
+function tween(ms,fn,alive,ease=easeIO){ms=ms/SPEED;return new Promise(res=>{const t0=performance.now();(function f(n){if(alive&&!alive())return res(false);const t=RM?1:Math.min(1,(n-t0)/ms);fn(ease(t),t);t<1?requestAnimationFrame(f):res(true);})(t0);});}
+const NS='http://www.w3.org/2000/svg';
+
+/* ---------- Geometrie (din web-3d/src/map/floor.json, 1 m = 10 unități) ---------- */
+const FULL=[-6,-6,193,396];
+const ROUTE_D="M78.1 196.2 H166.6 V170.2 L172.6 164.2 V4 H166.6";
+const FLOORS={
+  5:{pin:[27,243.4],lab:'528b',code:'B528b',vb:[-20,120,150,300],txt:'Corp B · etajul 5 · ușa D12'},
+  6:{pin:[164.4,4],lab:'623',code:'B623',vb:[20,-40,180,300],txt:'29 m · ~25 s de mers',route:true},
+  7:{pin:[110,285.5],lab:'712',code:'B712',vb:[30,150,150,300],txt:'Corp B · etajul 7 · ușa D07'}};
+const pinSVG=(x,y,l,live)=>`${live?`<g transform="translate(${x} ${y-17})"><circle class="ring" r="8"/><circle class="ring r2" r="8"/><circle class="ring r3" r="8"/></g>`:''}<g transform="translate(${x} ${y})"><path class="pinb" d="M0 0 C-3 -6 -11 -9 -11 -17 A11 11 0 1 1 11 -17 C11 -9 3 -6 0 0Z"/><text class="pint" y="-14.6">${l}</text></g>`;
+function floorLayer(n){const f=FLOORS[n];return `${f.route?`<path class="rc" d="${ROUTE_D}"/><path class="rt" d="${ROUTE_D}"/><circle class="dot" cx="78.1" cy="196.2" r="5"/>`:''}${pinSVG(f.pin[0],f.pin[1],f.lab,true)}`;}
+
+/* ---------- Fonturi și presete ---------- */
+const FONTS={
+  'Overpass':"'Overpass','Arial Narrow',system-ui,sans-serif",'Space Grotesk':"'Space Grotesk',system-ui,sans-serif",
+  'Bricolage Grotesque':"'Bricolage Grotesque',system-ui,sans-serif",'Sora':"'Sora',system-ui,sans-serif",'Archivo':"'Archivo',system-ui,sans-serif",
+  'Manrope':"'Manrope',system-ui,sans-serif",'Inter':"'Inter',system-ui,sans-serif",'IBM Plex Sans':"'IBM Plex Sans',system-ui,sans-serif",
+  'Atkinson Hyperlegible':"'Atkinson Hyperlegible',system-ui,sans-serif",'IBM Plex Mono':"'IBM Plex Mono',ui-monospace,Consolas,monospace",
+  'JetBrains Mono':"'JetBrains Mono',ui-monospace,Consolas,monospace",'Space Mono':"'Space Mono',ui-monospace,Consolas,monospace"};
+const COLS=[ // [cheie, etichetă, grup]
+  ['bg','Fundal','main'],['surface','Carduri, panouri','main'],['ink','Text','main'],['accent','Accent: butoane, plăcuțe','main'],['on','Text pe accent','main'],
+  ['floor','Podeaua holului','map'],['wall','Pereți','map'],['door','Uși','map'],['route','Traseu','map'],
+  ['muted','Text secundar','adv'],['live','Curs live, alertă','adv']];
+const PRESETS={
+ placuta:{name:'Plăcuța',mode:'light',
+  light:{bg:'#F4F6F7',surface:'#FFFFFF',ink:'#0D1B2A',muted:'#5A6878',accent:'#0D1B2A',on:'#F5B700',route:'#F5B700',live:'#E4572E',floor:'#E2E7EB',wall:'#0D1B2A',door:'#D9A066'},
+  dark:{bg:'#0B121A',surface:'#142030',ink:'#EAF0F5',muted:'#93A3B4',accent:'#F5B700',on:'#0D1B2A',route:'#F5B700',live:'#FF7A52',floor:'#1A2736',wall:'#8FA3B8',door:'#C48A55'},
+  fontDisplay:'Overpass',fontBody:'Inter',fontCode:'Overpass',weight:900,size:15,radius:8,shadow:'soft',pattern:'plain',patternAmt:30,wallw:1.7,routew:4.4,casing:true,glow:false,speed:1},
+ plansa:{name:'Planșa',mode:'light',
+  light:{bg:'#E8EFF5',surface:'#F6F9FC',ink:'#133A5E',muted:'#5B7893',accent:'#D94A1E',on:'#FFFFFF',route:'#D94A1E',live:'#D94A1E',floor:'#D5E2EE',wall:'#133A5E',door:'#B7793F'},
+  dark:{bg:'#0C1B2B',surface:'#12263A',ink:'#DCE9F5',muted:'#8BA6C0',accent:'#FF7A4D',on:'#0C1B2B',route:'#FF7A4D',live:'#FF7A4D',floor:'#173149',wall:'#7FA6CC',door:'#C9965E'},
+  fontDisplay:'IBM Plex Mono',fontBody:'IBM Plex Sans',fontCode:'IBM Plex Mono',weight:700,size:14.5,radius:2,shadow:'none',pattern:'grid',patternAmt:55,wallw:1,routew:3.4,casing:false,glow:false,speed:1},
+ noapte:{name:'Coridor noaptea',mode:'dark',
+  light:{bg:'#EEF5F2',surface:'#FFFFFF',ink:'#0E241D',muted:'#5C786E',accent:'#0E8F5B',on:'#FFFFFF',route:'#12A86A',live:'#E4572E',floor:'#DCEAE4',wall:'#2F5E50',door:'#C48A55'},
+  dark:{bg:'#0A1311',surface:'#12201C',ink:'#E2F1EA',muted:'#8AA79C',accent:'#2EE59D',on:'#04150E',route:'#2EE59D',live:'#FF6B4A',floor:'#16302A',wall:'#4E8574',door:'#C48A55'},
+  fontDisplay:'Space Grotesk',fontBody:'Inter',fontCode:'Space Grotesk',weight:700,size:15,radius:18,shadow:'strong',pattern:'dots',patternAmt:35,wallw:1.2,routew:4.4,casing:true,glow:true,speed:1},
+ prototip:{name:'Prototipul web-3d',mode:'light',
+  light:{bg:'#EEF1F6',surface:'#FFFFFF',ink:'#0F172A',muted:'#64748B',accent:'#2563EB',on:'#FFFFFF',route:'#2563EB',live:'#E4572E',floor:'#FFFFFF',wall:'#475569',door:'#D9A066'},
+  dark:{bg:'#0B1020',surface:'#111827',ink:'#E2E8F0',muted:'#94A3B8',accent:'#60A5FA',on:'#0B1020',route:'#60A5FA',live:'#FF7A52',floor:'#1E293B',wall:'#94A3B8',door:'#C48A55'},
+  fontDisplay:'Inter',fontBody:'Inter',fontCode:'Inter',weight:800,size:15,radius:14,shadow:'soft',pattern:'plain',patternAmt:30,wallw:1.4,routew:4,casing:true,glow:false,speed:1},
+ calm:{name:'Calm pentru boboci',mode:'light',
+  light:{bg:'#F3F5F2',surface:'#FFFFFF',ink:'#1F2A28',muted:'#66736F',accent:'#2F6F6A',on:'#FFFFFF',route:'#3E8E86',live:'#D9774A',floor:'#E4EAE6',wall:'#4F5E5A',door:'#C9A27A'},
+  dark:{bg:'#121816',surface:'#1B2421',ink:'#E3EAE7',muted:'#9AA8A3',accent:'#7FC4BB',on:'#0F1A18',route:'#7FC4BB',live:'#E99A72',floor:'#22302C',wall:'#7E918B',door:'#B8916A'},
+  fontDisplay:'Manrope',fontBody:'Atkinson Hyperlegible',fontCode:'Manrope',weight:800,size:16,radius:16,shadow:'soft',pattern:'glow',patternAmt:45,wallw:1.2,routew:5,casing:false,glow:false,speed:0.8}
+};
+const SCALARS=['fontDisplay','fontBody','fontCode','weight','size','radius','shadow','pattern','patternAmt','wallw','routew','casing','glow','speed'];
+const clone=o=>JSON.parse(JSON.stringify(o));
+function fromPreset(id){const p=PRESETS[id];return {preset:id,mode:p.mode,light:{...p.light},dark:{...p.dark},...Object.fromEntries(SCALARS.map(k=>[k,p[k]]))};}
+let state=fromPreset('placuta');
+try{const s=JSON.parse(localStorage.getItem('roomly-tema')||'null'); if(s&&PRESETS[s.preset]&&s.light&&s.dark) state={...fromPreset(s.preset),...s};}catch(e){}
+
+/* ---------- Culori ---------- */
+const hx=h=>{h=h.replace('#','');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16));};
+const toHex=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('').toUpperCase();
+const mix=(a,b,t)=>{const A=hx(a),B=hx(b);return toHex(A.map((v,i)=>v+(B[i]-v)*t));};
+const rgba=(a,al)=>{const A=hx(a);return `rgba(${A[0]}, ${A[1]}, ${A[2]}, ${al})`;};
+const lum=h=>{const c=hx(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
+const contrast=(a,b)=>{const L1=lum(a),L2=lum(b);return (Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05);};
+const SHADOWS={none:'none',soft:'0 1px 2px rgba(0,0,0,.06), 0 6px 16px -8px rgba(0,0,0,.18)',strong:'0 14px 30px -12px rgba(0,0,0,.45)'};
+function patternCSS(c){const a=state.patternAmt/100;
+  if(state.pattern==='grid'){const l=rgba(c.ink,(.05+.12*a).toFixed(3));return [`linear-gradient(${l} 1px, transparent 1px), linear-gradient(90deg, ${l} 1px, transparent 1px)`,'12px 12px'];}
+  if(state.pattern==='dots'){const l=rgba(c.ink,(.06+.18*a).toFixed(3));return [`radial-gradient(${l} 1px, transparent 1.4px)`,'11px 11px'];}
+  if(state.pattern==='glow'){return [`radial-gradient(120% 60% at 50% 0%, ${rgba(c.accent,(.06+.22*a).toFixed(3))}, transparent 70%)`,'100% 100%'];}
+  return ['none','auto'];}
+
+/* ---------- Controale ---------- */
+const presetsEl=$('#presets');
+presetsEl.innerHTML=Object.entries(PRESETS).map(([id,p])=>{const c=p[p.mode];return `<button class="preset" data-p="${id}" aria-pressed="false"><b>${p.name}</b><span class="sw4">${['bg','surface','accent','route','door'].map(k=>`<i style="background:${c[k]}"></i>`).join('')}</span></button>`;}).join('');
+presetsEl.addEventListener('click',e=>{const b=e.target.closest('.preset');if(!b)return;state=fromPreset(b.dataset.p);syncControls();updateAll();playAll();});
+function colorRows(group){return COLS.filter(c=>c[2]===group).map(([k,l])=>`<div class="crow"><label for="c-${k}">${l}</label><input type="color" id="c-${k}" data-c="${k}"><code id="h-${k}"></code></div>`).join('');}
+$('#colors-main').innerHTML=colorRows('main');$('#colors-map').innerHTML=colorRows('map');$('#colors-adv').innerHTML=colorRows('adv');
+$$('input[type=color]').forEach(i=>i.addEventListener('input',()=>{state[state.mode][i.dataset.c]=i.value.toUpperCase();updateAll();}));
+['fontDisplay','fontBody','fontCode'].forEach(id=>{$('#'+id).innerHTML=Object.keys(FONTS).map(f=>`<option>${f}</option>`).join('');});
+[['m-light','light'],['m-dark','dark']].forEach(([id,m])=>$('#'+id).addEventListener('click',()=>{state.mode=m;syncControls();updateAll();}));
+SCALARS.forEach(k=>{const el=$('#'+k);if(!el)return;el.addEventListener(el.type==='checkbox'?'change':'input',()=>{
+  let v=el.type==='checkbox'?el.checked:el.value; if(el.type==='range') v=+v; state[k]=v; updateAll();});});
+function fmt(k,v){return {weight:v,size:v+'px',radius:v+'px',patternAmt:v+'%',wallw:(+v).toFixed(1),routew:(+v).toFixed(1),speed:(+v).toFixed(1)+'×'}[k];}
+function syncControls(){
+  $$('.preset').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===state.preset));
+  $('#m-light').setAttribute('aria-pressed',state.mode==='light');$('#m-dark').setAttribute('aria-pressed',state.mode==='dark');
+  const c=state[state.mode];COLS.forEach(([k])=>{$('#c-'+k).value=c[k];});
+  SCALARS.forEach(k=>{const el=$('#'+k);if(!el)return;if(el.type==='checkbox')el.checked=!!state[k];else el.value=state[k];});
+}
+
+/* ---------- Randare ---------- */
+const pv=$('#pv'), ty=$('#ty');
+function applyVars(){
+  const c=state[state.mode], [pat,ps]=patternCSS(c);
+  const v={'--p-bg':c.bg,'--p-surface':c.surface,'--p-ink':c.ink,'--p-muted':c.muted,'--p-accent':c.accent,'--p-on':c.on,'--p-route':c.route,'--p-live':c.live,
+    '--p-floor':c.floor,'--p-wall':c.wall,'--p-door':c.door,'--p-mat':mix(c.door,c.floor,.6),
+    '--p-tab':contrast(c.accent,c.surface)>=3?c.accent:c.ink,
+    '--p-disp':FONTS[state.fontDisplay],'--p-body':FONTS[state.fontBody],'--p-code':FONTS[state.fontCode],'--p-w':state.weight,'--p-size':state.size+'px',
+    '--p-r':state.radius+'px','--p-shadow':SHADOWS[state.shadow],'--p-pattern':pat,'--p-psize':ps,'--p-wallw':state.wallw,'--p-routew':state.routew+'px',
+    '--p-casing':state.casing?1:0,'--p-glow':state.glow?`drop-shadow(0 0 3px ${c.route})`:'none','--p-speed':state.speed};
+  [pv,ty].forEach(el=>Object.entries(v).forEach(([k,val])=>el.style.setProperty(k,val)));
+  pv.dataset.mode=state.mode; SPEED=state.speed;
+}
+function updateLabels(){
+  const c=state[state.mode];COLS.forEach(([k])=>{$('#h-'+k).textContent=c[k];});
+  ['weight','size','radius','patternAmt','wallw','routew','speed'].forEach(k=>{$('#v-'+k).textContent=fmt(k,state[k]);});
+  $('#fontnames').textContent=`Titluri: ${state.fontDisplay} ${state.weight} · Text: ${state.fontBody} ${state.size}px · Coduri: ${state.fontCode}`;
+}
+function renderContrast(){
+  const c=state[state.mode];
+  const rows=[['Text pe fundal',c.ink,c.bg,4.5],['Text pe card',c.ink,c.surface,4.5],['Text secundar pe card',c.muted,c.surface,4.5],['Plăcuță / buton',c.on,c.accent,4.5],
+    ['Traseu pe podea',c.route,c.floor,3],['Pereți pe podea',c.wall,c.floor,3],['Uși pe podea',c.door,c.floor,1.6],['Pin pe podea',c.accent,c.floor,3]];
+  $('#contrast').innerHTML=rows.map(([l,a,b,min])=>{const r=contrast(a,b);const ok=r>=min;
+    let note=ok?'trece':'slab'; if(!ok&&l==='Traseu pe podea'&&state.casing) {note='ok cu contur';}
+    return `<div class="cr"><span class="pair"><i style="background:${b}"></i><i style="background:${a}"></i></span><span>${l}</span><span class="ratio">${r.toFixed(1)}:1</span><span class="badge ${ok||note==='ok cu contur'?'ok':'bad'}">${note}</span></div>`;}).join('');
+}
+function updateAll(){applyVars();updateLabels();renderContrast();updatePrompt();try{localStorage.setItem('roomly-tema',JSON.stringify(state));}catch(e){}}
+
+/* ---------- Prompt ---------- */
+function describeBg(){return {plain:'fundal simplu',grid:'grilă milimetrică discretă pe fundal',dots:'puncte fine pe fundal',glow:'o lumină discretă în culoarea accentului, de sus'}[state.pattern];}
+function tokens(c){return [
+  `--bg: ${c.bg};`,`--surface: ${rgba(c.surface,.82)};`,`--surface-solid: ${c.surface};`,`--border: ${rgba(c.ink,.08)};`,`--text: ${c.ink};`,`--text-muted: ${c.muted};`,
+  `--accent: ${c.accent};`,`--accent-soft: ${rgba(c.accent,.12)};`,`--on-accent: ${c.on};`,`--route: ${c.route};`,`--live: ${c.live};`,
+  `--scene-bg: ${c.bg};`,`--scene-ground: ${c.bg};`,`--scene-floor: ${c.floor};`,`--scene-wall: ${mix(c.surface,c.floor,.5)};`,`--scene-wall-top: ${c.wall};`,
+  `--scene-door: ${c.door};`,`--scene-door-edge: ${mix(c.door,'#000000',.18)};`,`--scene-door-mat: ${mix(c.door,c.floor,.6)};`].map(s=>'  '+s).join('\n');}
+function updatePrompt(){
+  const p=PRESETS[state.preset], diffs=[];
+  ['light','dark'].forEach(m=>COLS.forEach(([k,l])=>{if(state[m][k]!==p[m][k])diffs.push(`${l.toLowerCase()} ${state[m][k]} în modul ${m==='light'?'luminos':'întunecat'}`);}));
+  SCALARS.forEach(k=>{if(state[k]!==p[k])diffs.push({fontDisplay:`titluri în ${state.fontDisplay}`,fontBody:`text în ${state.fontBody}`,fontCode:`coduri de sală în ${state.fontCode}`,weight:`greutatea titlurilor ${state.weight}`,size:`text de ${state.size}px`,radius:`colțuri de ${state.radius}px`,shadow:`umbre ${({none:'deloc',soft:'discrete',strong:'pronunțate'})[state.shadow]}`,pattern:describeBg(),patternAmt:`intensitatea fundalului ${state.patternAmt}%`,wallw:`pereți de ${state.wallw}`,routew:`traseu de ${state.routew}`,casing:state.casing?'contur pe traseu':'traseu fără contur',glow:state.glow?'traseu luminos':'traseu fără strălucire',speed:`animații la ${state.speed}× viteză`}[k]);});
+  const fams=[...new Set([state.fontDisplay,state.fontBody,state.fontCode])];
+  const txt=
+`Aplică tema „${p.name}”${diffs.length?` (modificată: ${diffs.join('; ')})`:''} în aplicația web Roomly (\`web/\`, Vite + React + Tailwind v4).
+
+- Pune tokenii de mai jos în \`web/src/index.css\`: \`:root\` pentru modul luminos și \`:root[data-theme='dark']\` pentru cel întunecat. Leagă-i în \`@theme inline\`, la fel ca în \`web-3d/src/index.css\`. Scena 3D citește aceleași variabile \`--scene-*\` prin \`readSceneColors()\`.
+- Modul implicit: ${state.mode==='dark'?'întunecat':'luminos'}.
+- Fonturi, din Google Fonts (verifică diacriticele ș ț ă î â): ${fams.join(', ')}. Titluri ${state.fontDisplay}, greutate ${state.weight}. Text ${state.fontBody}, ${state.size}px. Coduri de sală (B623, B528b) ${state.fontCode}, bold.
+- Formă: colțuri ${state.radius}px pe carduri (jumătate pe plăcuțele cu cod), umbre ${({none:'deloc',soft:'discrete',strong:'pronunțate'})[state.shadow]}, ${describeBg()}${state.pattern!=='plain'?` (intensitate ${state.patternAmt}%)`:''}.
+- Hartă 2D: pereți de ${state.wallw} unități la scara 1 m = 10, uși în \`--scene-door\` cu covoraș pe hol, traseu de ${state.routew}${state.casing?' cu contur în culoarea pereților':''}${state.glow?' și strălucire (drop-shadow în culoarea traseului)':''}.
+- Plăcuțele de sală au fundal \`--accent\` și text \`--on-accent\`. Punctul de curs live are culoarea \`--live\`.
+- Animații alese: traseul se desenează, codul decriptat, pulsul pe cursul live, cardul devine hartă, ușa se deschide, etajele în felii (click pe un etaj → se aplatizează și intră în harta lui). Durate × ${(1/state.speed).toFixed(2)}. Cu \`prefers-reduced-motion\`, sar direct la starea finală.
+
+:root {
+  --radius: ${state.radius}px;
+  --font-display: ${FONTS[state.fontDisplay]};
+  --font-body: ${FONTS[state.fontBody]};
+  --font-code: ${FONTS[state.fontCode]};
+${tokens(state.light)}
+}
+
+:root[data-theme='dark'] {
+${tokens(state.dark)}
+}`;
+  $('#out').textContent=txt;
+}
+$('#copy').addEventListener('click',async()=>{const b=$('#copy'),t=$('#out').textContent;
+  try{await navigator.clipboard.writeText(t);b.textContent='Copiat!';}catch(e){const r=document.createRange();r.selectNodeContents($('#out'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selectat, apasă Ctrl+C';}
+  setTimeout(()=>b.textContent='Copiază promptul',1600);});
+
+/* ---------- Telefonul 1: Acasă + cod decriptat + card → hartă ---------- */
+const home=$('#phHome');
+home.innerHTML=`<div class="scr"><div class="sb"><span>09:42</span><span>Roomly</span></div>
+  <div class="home">
+    <div class="hello">Sâmbătă, 21 nov · Seria 1, grupa 1.2<b class="disp">Bună dimineața</b></div>
+    <div class="srch surf">Caută sală, profesor, materie…</div>
+    <div class="nc surf" role="button" tabindex="0" aria-label="Deschide harta până la B623"><span class="k">Următorul curs · în 18 min</span><span class="t disp">Programarea calculatoarelor</span>
+      <span class="wh"><span class="plate">B623</span><span class="dec" id="dec">Corp B · etajul 6 · sala 23</span></span><span class="btn">Du-mă acolo</span></div>
+    <div class="lst"><div class="surf"><span>12:00 Analiză matematică</span><span class="plate">B528b</span></div><div class="surf"><span>14:00 Fizică · laborator</span><span class="plate">B712</span></div></div>
+  </div>
+  <div class="tabs"><span class="on"><i></i>Acasă</span><span><i></i>Orar</span><span><i></i>Hartă</span></div>
+  <div class="ex"><div class="hd"><button class="back" aria-label="Înapoi">←</button><span class="plate">B623</span><span>Corp B · etajul 6</span></div>
+    <div class="mw paint"><svg class="mapsvg" viewBox="20 -40 180 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#plan"/>${floorLayer(6)}</svg>
+    <div class="pill surf"><span class="plate">B623</span><span><b>29 m</b> · ~25 s de mers</span></div></div></div></div>`;
+const H={tok:0}; const hAlive=t=>()=>t===H.tok;
+H.dec=$('#dec',home); H.card=$('.nc',home); H.ex=$('.ex',home); H.open=false;
+async function decode(a){const target='Corp B · etajul 6 · sala 23',CH='ABCDEFGHJKLMNOPRSTUVZ0123456789',n=target.length;H.dec.textContent=' ';await wait(350/SPEED);if(!a())return;
+  await tween(1300,(e,t)=>{const k=Math.floor(t*n*1.15);let o='';for(let i=0;i<n;i++){const ch=target[i];o+= i<k-4||ch===' '||ch==='·' ? (i<k-4?ch:ch) : (i<k?CH[(Math.random()*CH.length)|0]:' ');}H.dec.textContent=o;},a,t=>t);
+  if(a())H.dec.textContent=target;}
+function cardInset(){const s=home.querySelector('.scr').getBoundingClientRect(),c=H.card.getBoundingClientRect();return `inset(${c.top-s.top}px ${s.right-c.right}px ${s.bottom-c.bottom}px ${c.left-s.left}px round ${state.radius}px)`;}
+async function toggleCard(o){H.open=o;const from=cardInset(),to='inset(0px 0px 0px 0px round 0px)';H.ex.style.visibility='visible';
+  if(RM){H.ex.style.visibility=o?'visible':'hidden';return;}
+  const mw=$('.mw',H.ex);mw.animate(o?[{opacity:0,transform:'scale(1.08)'},{opacity:1,transform:'none'}]:[{opacity:1},{opacity:0}],{duration:(o?520:300)/SPEED,easing:'cubic-bezier(.2,.8,.2,1)'});
+  await H.ex.animate(o?[{clipPath:from},{clipPath:to}]:[{clipPath:to},{clipPath:from}],{duration:(o?520:380)/SPEED,easing:'cubic-bezier(.3,.9,.2,1)'}).finished.catch(()=>{});
+  H.ex.style.visibility=H.open?'visible':'hidden';}
+H.card.addEventListener('click',()=>toggleCard(true));H.card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCard(true);}});
+$('.back',home).addEventListener('click',()=>toggleCard(false));
+
+/* ---------- Telefonul 2: Hartă + traseu + puls + felii ---------- */
+const mp=$('#phMap');
+mp.innerHTML=`<div class="scr"><div class="sb"><span>09:43</span><span>Etajul <span id="fl-n">6</span></span></div>
+  <svg class="mapsvg" id="msvg" viewBox="${FLOORS[6].vb.join(' ')}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#plan"/><g id="flayer">${floorLayer(6)}</g></svg>
+  <div class="topf"><div class="srch surf">Caută sală…</div></div>
+  <button class="b3d surf" id="b3d">Etaje 3D</button>
+  <div class="fch surf" role="group" aria-label="Etaj">${[7,6,5].map(n=>`<button data-f="${n}" aria-pressed="${n===6}">${n}</button>`).join('')}</div>
+  <div class="pill surf"><span class="plate" id="pl-code">B623</span><span id="pl-txt"><b>29 m</b> · ~25 s de mers</span></div>
+  <div class="slv paint" id="slv"><div class="hd3 surf"><span><b>Clădirea Electro</b> · atinge un etaj</span><button class="back" id="b2d" aria-label="Închide">×</button></div>
+    <div class="persp"><div class="stk" id="stk">${[5,6,7].map((n,i)=>`<div class="slab" data-f="${n}" style="transform:translate(-50%,-50%) translateZ(${(i-1)*56}px)"><svg viewBox="${FULL.join(' ')}" aria-hidden="true"><rect class="sbg" x="-6" y="-6" width="193" height="396" rx="6"/><use href="#plan"/>${pinSVG(FLOORS[n].pin[0],FLOORS[n].pin[1],FLOORS[n].lab,false)}</svg><span class="tg">Etaj ${n}</span></div>`).join('')}</div></div></div></div>`;
+const M={tok:0,floor:6,svg:$('#msvg',mp),layer:$('#flayer',mp),slv:$('#slv',mp),stk:$('#stk',mp)}; const mAlive=t=>()=>t===M.tok;
+function setVB(v){M.svg.setAttribute('viewBox',v.map(x=>x.toFixed(1)).join(' '));}
+const getVB=()=>M.svg.getAttribute('viewBox').split(/\s+/).map(Number);
+function zoomTo(vb,ms,a){const from=getVB();return tween(ms,e=>setVB(from.map((x,i)=>x+(vb[i]-x)*e)),a);}
+function routeEls(){return {ps:$$('.rt,.rc',M.layer),dot:$('.dot',M.layer)};}
+function setRoute(e){const {ps,dot}=routeEls();if(!ps.length)return;const L=ps[0].getTotalLength();ps.forEach(p=>{p.style.strokeDasharray=L;p.style.strokeDashoffset=L*(1-e);});const pt=ps[0].getPointAtLength(L*e);dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);}
+async function drawRoute(a){setRoute(0);await wait(300/SPEED);if(!a())return;await tween(2600,e=>setRoute(e),a);}
+function setFloor(n){M.floor=n;const f=FLOORS[n];M.layer.innerHTML=floorLayer(n);$('#fl-n',mp).textContent=n;$('#pl-code',mp).textContent=f.code;
+  $('#pl-txt',mp).innerHTML=f.route?'<b>29 m</b> · ~25 s de mers':f.txt;$$('.fch button',mp).forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===n));if(f.route)setRoute(1);}
+$$('.fch button',mp).forEach(b=>b.addEventListener('click',async()=>{const n=+b.dataset.f;if(n===M.floor)return;const t=++M.tok,a=mAlive(t);
+  if(!RM) await M.layer.animate([{opacity:1},{opacity:0}],{duration:160/SPEED,fill:'forwards'}).finished; setFloor(n); M.layer.getAnimations().forEach(x=>x.cancel());
+  if(!RM) M.layer.animate([{opacity:0},{opacity:1}],{duration:220/SPEED});
+  await zoomTo(FLOORS[n].vb,520,a); if(FLOORS[n].route) drawRoute(a);}));
+const BASE='rotateX(57deg) rotateZ(-36deg)';
+const slabs=()=>$$('.slab',mp);
+function slabZ(i,gap){return `translate(-50%,-50%) translateZ(${(i-1)*gap}px)`;}
+async function openSlices(){const t=++M.tok,a=mAlive(t);
+  await zoomTo(FULL,380,a); if(!a())return;
+  const sel=[5,6,7].indexOf(M.floor), S=1/0.44;
+  M.slv.style.visibility='visible';
+  if(RM){M.stk.style.transform=BASE;slabs().forEach((s,i)=>{s.style.opacity=1;s.style.transform=slabZ(i,56);});return;}
+  slabs().forEach((s,i)=>{s.style.opacity=i===sel?1:0;s.style.transform=slabZ(i,0);$('.sbg',s).style.opacity=i===sel?0:1;});
+  M.stk.style.transform=`rotateX(0deg) rotateZ(0deg) scale(${S})`;
+  $('.hd3',mp).animate([{opacity:0},{opacity:1}],{duration:300/SPEED});
+  await tween(700,e=>{M.stk.style.transform=`rotateX(${57*e}deg) rotateZ(${-36*e}deg) scale(${S+(1-S)*e})`;
+    slabs().forEach((s,i)=>{s.style.transform=slabZ(i,56*e);s.style.opacity=i===sel?1:e;$('.sbg',s).style.opacity=i===sel?e:1;});},a);}
+async function enterFloor(n){const t=++M.tok,a=mAlive(t);const idx=[5,6,7].indexOf(n),S=1/0.44;
+  if(RM){M.slv.style.visibility='hidden';setFloor(n);setVB(FLOORS[n].vb);return;}
+  await tween(720,e=>{M.stk.style.transform=`rotateX(${57*(1-e)}deg) rotateZ(${-36*(1-e)}deg) scale(${1+(S-1)*e})`;
+    slabs().forEach((s,i)=>{s.style.transform=slabZ(i,56*(1-e));s.style.opacity=i===idx?1:Math.max(0,1-e*2.2);$('.sbg',s).style.opacity=i===idx?1-e:1;});},a);
+  if(!a())return; setFloor(n); setVB(FULL); M.slv.style.visibility='hidden';
+  await zoomTo(FLOORS[n].vb,700,a); if(a()&&FLOORS[n].route) drawRoute(a);}
+$('#b3d',mp).addEventListener('click',openSlices);
+$('#b2d',mp).addEventListener('click',()=>enterFloor(M.floor));
+slabs().forEach(s=>s.addEventListener('click',()=>enterFloor(+s.dataset.f)));
+
+/* ---------- Telefonul 3: Ușa se deschide ---------- */
+const rm=$('#phRoom');
+rm.innerHTML=`<div class="scr"><div class="sb"><span>09:58</span><span>Roomly</span></div>
+  <div class="dscene"><div class="dframe"></div><div class="dway"><div class="room"><svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="25" fill="none" stroke="var(--p-route)" stroke-width="4"/><path class="chk" d="M16 29 L25 38 L41 20" fill="none" stroke="var(--p-route)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="rk">Ai ajuns</span></div>
+    <div class="door"><span class="plate">B623</span><span class="handle"></span></div></div></div>
+  <div class="dsheet"><div class="grab"></div>
+    <div class="r"><span class="disp" style="font-size:1.25em">Sala B623</span><span class="plate">B623</span></div>
+    <div class="r muted"><span>Corp B · etajul 6 · ușa D20</span></div>
+    <div class="r"><span style="display:flex;gap:7px;align-items:center"><span class="livedot"></span><b>Acum: Programarea calc. · curs</b></span></div>
+    <div class="tl"><div class="now"><span>10:00–12:00 Programarea calc.</span><b>curs</b></div><div><span>12:00–14:00 Structuri de date</span><b>lab</b></div><div><span>16:00–18:00</span><b>liberă</b></div></div>
+    <span class="btn">Vezi orarul sălii</span></div></div>`;
+const D={tok:0,door:$('.door',rm),h:$('.handle',rm),chk:$('.chk',rm),room:$('.room',rm)}; D.cl=D.chk.getTotalLength(); D.chk.style.strokeDasharray=D.cl;
+function doorEnd(){D.door.style.transform='rotateY(-104deg)';D.chk.style.strokeDashoffset=0;D.room.style.opacity=1;}
+async function openDoor(a){D.door.style.transform='rotateY(0deg)';D.chk.style.strokeDashoffset=D.cl;D.room.style.opacity=.35;await wait(600/SPEED);if(!a())return;
+  await D.h.animate([{transform:'rotate(0)'},{transform:'rotate(28deg)'},{transform:'rotate(0)'}],{duration:420/SPEED,easing:'ease-in-out'}).finished;if(!a())return;
+  tween(700,e=>{D.room.style.opacity=(.35+.65*e).toFixed(2);},a);
+  await tween(1000,e=>{D.door.style.transform=`rotateY(${-104*e}deg)`;},a,t=>1-Math.pow(1-t,3)*Math.cos(t*4.6));if(!a())return;
+  await tween(420,e=>{D.chk.style.strokeDashoffset=D.cl*(1-e);},a,easeOut);}
+
+/* ---------- Rulează tot ---------- */
+function playAll(){ if(RM){doorEnd();return;}
+  const th=++H.tok; if(H.open){H.open=false;H.ex.style.visibility='hidden';} decode(hAlive(th));
+  const tm=++M.tok; M.slv.style.visibility='hidden'; setFloor(6); setVB(FLOORS[6].vb); drawRoute(mAlive(tm));
+  const td=++D.tok; openDoor(()=>td===D.tok);}
+$('#play').addEventListener('click',playAll);
+
+syncControls(); updateAll(); setRoute(1); doorEnd();
+if(!RM) setTimeout(playAll,500);
+})();
+</script>

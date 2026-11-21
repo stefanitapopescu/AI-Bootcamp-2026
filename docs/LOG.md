@@ -34,15 +34,29 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 - Am căutat inspirație pe net: MazeMap, Mappedin, MapsPeople, My Class Map (Utah), HyperLocal, selectorul de etaje din Apple Maps, animații de traseu de pe Awwwards și Codrops, View Transitions API.
 - Artefact cu propuneri: https://claude.ai/artifact/WZ3etCLxjLEB9ejDr3QPum (privat, se dă acces din Share). Sursa e în `docs/design/roomly-miscare.html`.
   - 3 direcții vizuale: Plăcuța, Planșa, Coridor noaptea.
-  - 12 animații cu demo live pe planul real (`plan_2d.json`), dintre care 7 originale.
+  - 12 animații cu demo live, dintre care 7 originale. Desenele folosesc schema din `web-3d/src/map/floor.json`: conturul holurilor, pereții și cele 20 de uși detectate, cu covoraș. Traseul demo pleacă din holul central și ajunge la ușa D20, unde e pusă B623 ca exemplu.
   - 3 animații pentru pagina de feedback.
   - Recomandarea pentru demo-ul de 90 s.
 
+- Explorator de temă: https://claude.ai/artifact/5ndncBVm3F8ioTxnJ4y1nr (sursa în `docs/design/roomly-tema.html`).
+  - 5 presete și culorile pe fiecare mod (luminos și întunecat).
+  - 12 fonturi, cu test de diacritice.
+  - Fundal, colțuri, umbre, harta (grosimi, contur, strălucire), viteza animațiilor.
+  - Verificare de contrast WCAG.
+  - Prompt cu tokenii CSS, cu aceleași nume ca în `web-3d/src/index.css` (`--scene-*`).
+
 **Decizii:**
-- — (propuneri, de ales la ședință)
+- Stefanita a ales animațiile: traseul se desenează, codul decriptat, pulsul pe cursul live, cardul devine hartă, ușa se deschide și etajele în felii. La click pe o felie, etajul se aplatizează și intră în harta lui, cu zoom pe zona sălii.
+
+- Galerie de fundaluri în tema Plăcuța: https://claude.ai/artifact/Um1z8ejxDGNMjTc58NCffY (sursa în `docs/design/roomly-fundaluri.html`).
+  - 13 fundaluri: 10 animate, 3 statice.
+  - Butonul „Îmi place” generează promptul pentru `web/`.
+
+**Decizii (completare):**
+- Tema aleasă de Stefanita: **Plăcuța** (bleumarin + galben de semnalizare, Overpass + Inter).
 
 **Ce a rămas:**
-- [ ] De ales la ședință direcția vizuală și animațiile care intră în demo.
+- [ ] De ales fundalurile din galerie, apoi de lipit promptul de temă și cel de fundaluri în sesiunea care face `web/`.
 - [ ] Numele: artefactul folosește „Roomly” (`CONTEXT.md` §1), dar `CLAUDE.md` încă spune „Coridor”.
 
 **Fișiere:** `docs/design/roomly-miscare.html`, `docs/LOG.md`
