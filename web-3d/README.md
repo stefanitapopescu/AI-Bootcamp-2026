@@ -1,8 +1,6 @@
-# web-3d: harta 3D minimalistă (prototip web)
+# web-3d: harta 3D minimalistă cu navigare (prototip web)
 
-Prototip web care transformă scanarea 3D a etajului (`../2_11_2025.glb`) într-o hartă 3D minimalistă a holurilor, cu ușile detectate automat. Rulează în browser, inclusiv pe telefon.
-
-**Stare:** un singur etaj (scanarea din rădăcină), holuri + uși. Traseele, pin-urile sălilor și orarul nu sunt încă aici.
+Prototip web care transformă scanarea 3D a etajului (`../2_11_2025.glb`, etajul 6, corpul B) într-o hartă 3D minimalistă. Pe hartă sunt laboratoarele, toaleta, lifturile și scările, iar navigarea arată traseul de la scări sau lift până la ușa laboratorului ales. Rulează în browser, inclusiv pe telefon.
 
 ## Pornire
 
@@ -15,17 +13,22 @@ npm run dev -- --host    # accesibil și de pe telefon, în aceeași rețea
 
 ## Ce face
 
-- **Holuri:** `scripts/extract-floor.mjs` găsește înălțimea podelei, conturul zonei de mers, îl aliniază la axe și îl îndreaptă, apoi construiește pereții pe contur. Rezultatul este `src/map/floor.json`.
-- **Uși:** `scripts/detect-doors.mjs` „desfășoară” fiecare perete din scanare (culoare + adâncime) și caută tiparul unei uși: două tocuri verticale până la podea, buiandrug la ~2 m, foaie netedă. Ușile alăturate devin uși duble. Sunt detectate 20 de uși, iar 2–4 sunt ratate (cele cu afișe pe ele).
-- **Vizualizare:** React + react-three-fiber. Podea albă, pereți joși (1,4 m), uși chihlimbarii cu covoraș în fața lor, vedere 3D sau de sus, temă luminoasă/întunecată.
+- **Holuri:** `scripts/extract-floor.mjs` găsește podeaua, conturul zonei de mers, îl aliniază și îl îndreaptă, apoi construiește pereții pe contur.
+- **Uși:** `scripts/detect-doors.mjs` caută tiparul unei uși pe pereții „desfășurați” din scanare (20 de uși detectate). Clasificarea din `scripts/door-labels.json` este verificată manual:
+  - **8 laboratoare** (chihlimbariu, cu nume): ușile de pe cele două holuri lungi care au hârtii pe ele sau sunt duble. Doar **B625** e citit din scanare; Lab 1–7 sunt nume provizorii.
+  - **1 toaletă** (teal, WC) și **2 lifturi** (ardezie, Lift).
+  - **Celelalte uși** sunt desenate în gri-bej, discret.
+- **Scări:** `scripts/detect-stairs.mjs` găsește cele două case de scări din înălțimile scanării. Sunt desenate ca o zonă verde cu trepte, cu deschidere în perete.
+- **Navigare:** alegi de unde vii (Scări 1, Scări 2, Lift) și laboratorul (din listă sau atingând eticheta pe hartă). Traseul e calculat cu A* pe o grilă a holurilor, la 40 cm de pereți, apoi netezit. E desenat albastru, animat spre ușă, iar porțiunile ascunse de pereți apar estompate. Camera se așază în spatele punctului de intrare, cu fața în direcția în care pornești, și încadrează tot traseul. Panoul arată distanța și timpul de mers.
+- Vedere 3D sau de sus, temă luminoasă/întunecată, merge pe telefon.
 
 ## Comenzi
 
 | Comandă | Ce face |
 |---|---|
-| `npm run extract` | regenerează holurile și ușile din `../2_11_2025.glb` |
-| `npm run doors` | regenerează doar ușile |
-| `node scripts/wall-elevations.mjs ../2_11_2025.glb src/map/floor.json out.png` | imagine de depanare cu pereții desfășurați |
+| `npm run extract` | regenerează holurile, ușile și scările din `../2_11_2025.glb` |
+| `npm run doors` / `npm run stairs` | regenerează doar ușile / scările |
+| `npm run inspect` | imagini de depanare în `inspect-out/` (vedere de sus, uși, plăcuțe) |
 | `npm run build` | build de producție în `dist/` |
 
 ## Structură
@@ -33,15 +36,19 @@ npm run dev -- --host    # accesibil și de pe telefon, în aceeași rețea
 ```text
 web-3d/
 ├── scripts/
-│   ├── extract-floor.mjs     scanare GLB → floor.json (contur + pereți)
-│   ├── detect-doors.mjs      uși din scanare → floor.json
-│   ├── wall-elevations.mjs   instrument de depanare
-│   └── lib/scan.mjs          raycasting (BVH), texturi, PNG
+│   ├── extract-floor.mjs     scanare → floor.json (contur + pereți)
+│   ├── detect-doors.mjs      uși din scanare + clasificarea din door-labels.json
+│   ├── detect-stairs.mjs     case de scări din înălțimile scanării
+│   ├── door-labels.json      tipurile ușilor și numele laboratoarelor (manual)
+│   ├── inspect-scan.mjs      imagini de depanare
+│   └── lib/                  raycasting (BVH), texturi, PNG
 ├── src/
-│   ├── map/                  floor.json, tipuri
-│   ├── three/                Scene, Floor, Walls, Doors, CameraRig, theme
-│   └── App.tsx               interfața (bară sus, controale vedere)
-└── log.md                    jurnalul modificărilor acestui prototip
+│   ├── map/                  floor.json (generat), tipuri, deschideri în pereți
+│   ├── nav/navigation.ts     puncte de intrare, grilă, A*, netezire
+│   ├── three/                Scene, Floor, Walls, Doors, Stairs, Markers, RoutePath, CameraRig
+│   └── App.tsx               interfața (panou de navigare, controale)
+├── CLAUDE.md                 reguli pentru Claude în acest folder
+└── log.md                    jurnalul modificărilor prototipului
 ```
 
 **Stack:** Vite, React 18, TypeScript, Tailwind v4, three.js, @react-three/fiber, @react-three/drei. Scripturile Node folosesc `@gltf-transform/core`, `three-mesh-bvh` și `jpeg-js`.

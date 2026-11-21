@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "extract": "node scripts/extract-floor.mjs ../2_11_2025.glb src/map/floor.json && npm run doors",
-    "doors": "node scripts/detect-doors.mjs ../2_11_2025.glb src/map/floor.json"
+    "extract": "node scripts/extract-floor.mjs ../2_11_2025.glb src/map/floor.json && npm run doors && npm run stairs",
+    "doors": "node scripts/detect-doors.mjs ../2_11_2025.glb src/map/floor.json",
+    "stairs": "node scripts/detect-stairs.mjs ../2_11_2025.glb src/map/floor.json",
+    "inspect": "node scripts/inspect-scan.mjs ../2_11_2025.glb src/map/floor.json inspect-out"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

@@ -140,6 +140,27 @@ const doors = picked.map((d, k) => {
 console.log(`doors: ${doors.length}`);
 picked.forEach((p, k) => console.log(`  ${doors[k].id} band${Math.floor(p.i / 330)} x=${(p.i % 330) * 3}-${(p.j % 330) * 3} w=${doors[k].width.toFixed(2)} score=${p.score.toFixed(2)} edges=${p.edges.toFixed(2)} top=${p.top.toFixed(2)} inner=${p.inner.toFixed(2)} std=${p.std.toFixed(0)}`));
 
+// ---------- apply the manual classification (scripts/door-labels.json) ----------
+// Each label claims the nearest detected door within 0.6 m; its reviewed spec wins
+// (e.g. corrected widths). Labelled doors that were not detected are added from the spec.
+const LABELS = new URL('./door-labels.json', import.meta.url);
+if (fs.existsSync(LABELS)) {
+  const { labels } = JSON.parse(fs.readFileSync(LABELS, 'utf8'));
+  for (const d of doors) d.type = 'other';
+  for (const l of labels) {
+    let best = null;
+    for (const d of doors) {
+      const dist = Math.hypot(d.center[0] - l.center[0], d.center[1] - l.center[1]);
+      if (dist < 0.6 && (!best || dist < best.dist)) best = { d, dist };
+    }
+    const spec = { center: l.center, width: l.width, tangent: l.tangent, normal: l.normal, kind: l.kind, type: l.type, ...(l.name ? { name: l.name } : {}) };
+    if (best) Object.assign(best.d, spec);
+    else doors.push({ id: `D${String(doors.length + 1).padStart(2, '0')}`, score: 1, ...spec });
+  }
+  const count = (t) => doors.filter((d) => d.type === t).length;
+  console.log(`classified: lab ${count('lab')}, toilet ${count('toilet')}, elevator ${count('elevator')}, other ${count('other')}`);
+}
+
 floor.doors = doors;
 fs.writeFileSync(FLOOR, JSON.stringify(floor));
 

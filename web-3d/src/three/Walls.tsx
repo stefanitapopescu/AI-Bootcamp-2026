@@ -2,17 +2,20 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { floorData } from '../map/floor';
+import { wallOpenings } from '../map/openings';
+
+const OPENINGS = wallOpenings(floorData);
 
 export const WALL_HEIGHT = 1.4; // dollhouse height keeps hallways visible
 export const WALL_THICKNESS = 0.15;
 const THICKNESS = WALL_THICKNESS;
 const CAP = 0.03; // thin darker cap on top of walls for definition
 
-/** Door openings on segment a→b, as [start, end] distances along the segment. */
+/** Openings (drawn doors, stair entries) on segment a→b, as [start, end] distances along the segment. */
 function doorIntervals(x0: number, z0: number, x1: number, z1: number, len: number): [number, number][] {
   const tx = (x1 - x0) / len, tz = (z1 - z0) / len;
   const out: [number, number][] = [];
-  for (const d of floorData.doors ?? []) {
+  for (const d of OPENINGS) {
     const rx = d.center[0] - x0, rz = d.center[1] - z0;
     const along = rx * tx + rz * tz;
     const off = Math.abs(rx * tz - rz * tx);

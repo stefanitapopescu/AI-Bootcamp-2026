@@ -1,0 +1,355 @@
+{
+ "_readme": "Manual door classification, reviewed visually on the close-ups from scripts/inspect-scan.mjs. Matched by position (nearest detected door within 0.6 m). Types: lab, toilet, elevator, other. Rule (user, 2026-11-21): labs = doors on the two long hallways that have paper notices on them or are double doors. Unlabelled doors become \"other\" and are drawn in a neutral style (no door is hidden). A labelled door that is not detected is added from the spec here. Lab doors carry a display name (\"name\"); only B625 is known from the scan, the rest are placeholders to replace with real room codes.",
+ "labels": [
+  {
+   "type": "elevator",
+   "note": "Elevator (sticker: 450 kg / 6 persons)",
+   "center": [
+    1.69,
+    9.33
+   ],
+   "width": 0.9,
+   "tangent": [
+    -1,
+    0
+   ],
+   "normal": [
+    0,
+    1
+   ],
+   "kind": "single",
+   "detectedAs": "D07"
+  },
+  {
+   "type": "elevator",
+   "note": "Elevator, next to D07",
+   "center": [
+    -0.14,
+    9.33
+   ],
+   "width": 0.9,
+   "tangent": [
+    -1,
+    0
+   ],
+   "normal": [
+    0,
+    1
+   ],
+   "kind": "single",
+   "detectedAs": "D08"
+  },
+  {
+   "type": "toilet",
+   "note": "TOILET pictogram on the door",
+   "center": [
+    1.24,
+    -4.21
+   ],
+   "width": 0.65,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D15"
+  },
+  {
+   "type": "lab",
+   "note": "Double door with a notice (long hallway)",
+   "center": [
+    8.78,
+    -11.67
+   ],
+   "width": 1.2,
+   "tangent": [
+    0,
+    1
+   ],
+   "normal": [
+    1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D03",
+   "name": "Lab 2"
+  },
+  {
+   "type": "lab",
+   "note": "Double door with a timetable (ORAR) posted on it (long hallway)",
+   "center": [
+    8.78,
+    -4.05
+   ],
+   "width": 0.65,
+   "tangent": [
+    0,
+    1
+   ],
+   "normal": [
+    1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D04",
+   "name": "Lab 1"
+  },
+  {
+   "type": "lab",
+   "note": "Double door with a plate on the leaf (long hallway)",
+   "center": [
+    -6.61,
+    12.62
+   ],
+   "width": 1.35,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D11",
+   "name": "Lab 7"
+  },
+  {
+   "type": "lab",
+   "note": "Double door, room plate B625 next to it (long hallway)",
+   "center": [
+    -6.61,
+    5.12
+   ],
+   "width": 1.65,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "double",
+   "detectedAs": "D12",
+   "name": "B625"
+  },
+  {
+   "type": "lab",
+   "note": "Paper notice on the door (long hallway)",
+   "center": [
+    8.43,
+    -19.22
+   ],
+   "width": 0.6,
+   "tangent": [
+    1,
+    0
+   ],
+   "normal": [
+    0,
+    -1
+   ],
+   "kind": "single",
+   "detectedAs": "D01",
+   "name": "Lab 6"
+  },
+  {
+   "type": "lab",
+   "note": "Paper notices on the door (long hallway)",
+   "center": [
+    8.78,
+    -15.37
+   ],
+   "width": 1.3,
+   "tangent": [
+    0,
+    1
+   ],
+   "normal": [
+    1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D02",
+   "name": "Lab 3"
+  },
+  {
+   "type": "other",
+   "note": "Long hallway, plate on the wall but no paper on the door",
+   "center": [
+    -5.05,
+    7.16
+   ],
+   "width": 0.75,
+   "tangent": [
+    0,
+    1
+   ],
+   "normal": [
+    1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D09"
+  },
+  {
+   "type": "other",
+   "note": "Long hallway, plates on the wall but no paper on the door",
+   "center": [
+    -6.61,
+    17.97
+   ],
+   "width": 0.9,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D10"
+  },
+  {
+   "type": "other",
+   "note": "Central hall, not on the two long hallways",
+   "center": [
+    -3.78,
+    -5.14
+   ],
+   "width": 0.6,
+   "tangent": [
+    1,
+    0
+   ],
+   "normal": [
+    0,
+    -1
+   ],
+   "kind": "single",
+   "detectedAs": "D13"
+  },
+  {
+   "type": "other",
+   "note": "Central hall, not on the two long hallways",
+   "center": [
+    -3.06,
+    -4.06
+   ],
+   "width": 0.6,
+   "tangent": [
+    0,
+    1
+   ],
+   "normal": [
+    1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D14"
+  },
+  {
+   "type": "other",
+   "note": "Central hall, not on the two long hallways",
+   "center": [
+    5.5,
+    -3.23
+   ],
+   "width": 0.9,
+   "tangent": [
+    1,
+    0
+   ],
+   "normal": [
+    0,
+    -1
+   ],
+   "kind": "single",
+   "detectedAs": "D16"
+  },
+  {
+   "type": "other",
+   "note": "Long hallway, plain door",
+   "center": [
+    7.13,
+    -5.88
+   ],
+   "width": 0.6,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D17"
+  },
+  {
+   "type": "other",
+   "note": "Long hallway, plain door",
+   "center": [
+    7.13,
+    -7.88
+   ],
+   "width": 0.7,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D18"
+  },
+  {
+   "type": "lab",
+   "note": "Paper notice on the door (long hallway)",
+   "center": [
+    7.13,
+    -15.5
+   ],
+   "width": 1.25,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D19",
+   "name": "Lab 4"
+  },
+  {
+   "type": "lab",
+   "note": "Small paper label on the door (long hallway)",
+   "center": [
+    7.13,
+    -18.82
+   ],
+   "width": 0.6,
+   "tangent": [
+    0,
+    -1
+   ],
+   "normal": [
+    -1,
+    0
+   ],
+   "kind": "single",
+   "detectedAs": "D20",
+   "name": "Lab 5"
+  }
+ ]
+}

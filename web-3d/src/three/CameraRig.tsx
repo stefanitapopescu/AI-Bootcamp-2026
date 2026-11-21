@@ -22,23 +22,30 @@ const FIT_POINTS = floorData.floor.flatMap((p) =>
   p.outer.flatMap(([x, z]) => [new THREE.Vector3(x, 0, z), new THREE.Vector3(x, WALL_HEIGHT, z)]),
 );
 
-/**
- * Camera goal that fits the whole floor: long side along the wider screen axis,
- * distance found by projecting the outline and binary-searching.
- */
-function computeGoal(view: ViewMode, camera: THREE.PerspectiveCamera): Goal {
-  const landscape = camera.aspect >= 1;
-  const azimuth = (landscape ? Math.PI / 2 : 0) + (view === '3d' ? THREE.MathUtils.degToRad(-12) : 0);
-  const target = new THREE.Vector3(floorCenter.x, 0, floorCenter.z);
+/** A route to frame: its points, and the direction the visitor faces at its start. */
+export interface CameraFocus {
+  key: string;
+  points: [number, number][];
+  facing: [number, number];
+}
+
+const FOCUS_POLAR = THREE.MathUtils.degToRad(40); // steeper than the overview so walls hide less of the route
+
+/** Screen window (NDC) left free by the UI: the nav panel sits bottom-left (desktop) or across the bottom (phone). */
+type Window = { x0: number; x1: number; y0: number; y1: number };
+const routeWindow = (aspect: number): Window => (aspect >= 1 ? { x0: -0.35, x1: 0.8, y0: -0.6, y1: 0.75 } : { x0: -0.8, x1: 0.8, y0: -0.15, y1: 0.7 });
+
+/** Distance at which all points fit on screen for the given angles (binary search on projected points). */
+function fitDistance(camera: THREE.PerspectiveCamera, target: THREE.Vector3, polar: number, azimuth: number, points: THREE.Vector3[], win: Window) {
   const probe = camera.clone();
   const fits = (dist: number) => {
-    probe.position.setFromSpherical(new THREE.Spherical(dist, POLAR[view], azimuth)).add(target);
+    probe.position.setFromSpherical(new THREE.Spherical(dist, polar, azimuth)).add(target);
     probe.lookAt(target);
     probe.updateMatrixWorld();
     probe.updateProjectionMatrix();
-    return FIT_POINTS.every((c) => {
+    return points.every((c) => {
       const p = c.clone().project(probe);
-      return Math.abs(p.x) <= MARGIN && Math.abs(p.y) <= MARGIN && p.z < 1;
+      return p.x >= win.x0 && p.x <= win.x1 && p.y >= win.y0 && p.y <= win.y1 && p.z < 1;
     });
   };
   let lo = 1, hi = 400;
@@ -47,7 +54,31 @@ function computeGoal(view: ViewMode, camera: THREE.PerspectiveCamera): Goal {
     if (fits(mid)) hi = mid;
     else lo = mid;
   }
-  return { target, sph: new THREE.Spherical(hi, POLAR[view], azimuth) };
+  return hi;
+}
+
+/** Whole floor, long side along the wider screen axis. */
+function computeGoal(view: ViewMode, camera: THREE.PerspectiveCamera): Goal {
+  const landscape = camera.aspect >= 1;
+  const azimuth = (landscape ? Math.PI / 2 : 0) + (view === '3d' ? THREE.MathUtils.degToRad(-12) : 0);
+  const target = new THREE.Vector3(floorCenter.x, 0, floorCenter.z);
+  const dist = fitDistance(camera, target, POLAR[view], azimuth, FIT_POINTS, { x0: -MARGIN, x1: MARGIN, y0: -MARGIN, y1: MARGIN });
+  return { target, sph: new THREE.Spherical(dist, POLAR[view], azimuth) };
+}
+
+/**
+ * Route view: the camera stands behind the entry point, looking the way the visitor walks in,
+ * and backs off until the whole route (plus a little context) is on screen.
+ */
+function computeFocusGoal(focus: CameraFocus, camera: THREE.PerspectiveCamera): Goal {
+  const pts = focus.points;
+  const xs = pts.map((p) => p[0]), zs = pts.map((p) => p[1]);
+  const target = new THREE.Vector3((Math.min(...xs) + Math.max(...xs)) / 2, 0, (Math.min(...zs) + Math.max(...zs)) / 2);
+  // camera offset points opposite to the facing direction: (sinθ, cosθ) = -facing
+  const azimuth = Math.atan2(-focus.facing[0], -focus.facing[1]);
+  const fit = pts.flatMap(([x, z]) => [new THREE.Vector3(x, 0, z), new THREE.Vector3(x, WALL_HEIGHT, z)]);
+  const dist = Math.max(9, fitDistance(camera, target, FOCUS_POLAR, azimuth, fit, routeWindow(camera.aspect)));
+  return { target, sph: new THREE.Spherical(dist, FOCUS_POLAR, azimuth) };
 }
 
 const applyGoal = (camera: THREE.Camera, c: MapControlsImpl, target: THREE.Vector3, sph: THREE.Spherical) => {
@@ -56,7 +87,7 @@ const applyGoal = (camera: THREE.Camera, c: MapControlsImpl, target: THREE.Vecto
   c.update();
 };
 
-export function CameraRig({ view, resetKey }: { view: ViewMode; resetKey: number }) {
+export function CameraRig({ view, resetKey, focus }: { view: ViewMode; resetKey: number; focus?: CameraFocus | null }) {
   const controls = useRef<MapControlsImpl>(null);
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const size = useThree((s) => s.size);
@@ -64,7 +95,7 @@ export function CameraRig({ view, resetKey }: { view: ViewMode; resetKey: number
   const first = useRef(true);
 
   useEffect(() => {
-    const g = computeGoal(view, camera);
+    const g = focus ? computeFocusGoal(focus, camera) : computeGoal(view, camera);
     if (first.current && controls.current) {
       // jump straight to the initial view on first render
       first.current = false;
@@ -72,7 +103,8 @@ export function CameraRig({ view, resetKey }: { view: ViewMode; resetKey: number
       return;
     }
     goal.current = g;
-  }, [view, resetKey, camera, size.width, size.height]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- focus is tracked by its key
+  }, [view, resetKey, focus?.key, camera, size.width, size.height]);
 
   // stop the fly-to animation as soon as the user grabs the map
   useEffect(() => {

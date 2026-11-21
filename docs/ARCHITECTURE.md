@@ -33,7 +33,7 @@ ConcursTOP/
 ├── backend/        (planificat) FastAPI: importul orarului (openpyxl + Claude), procesarea scanărilor
 ├── data/           (planificat) contract.md, seed.json, scanări GLB, planuri 2D
 ├── pitch/          (planificat) prezentare, video de rezervă, rezultatele testelor
-└── web-3d/         prototip web: hartă 3D minimalistă din scanarea GLB + uși detectate (React + react-three-fiber), vezi web-3d/README.md
+└── web-3d/         prototip: hartă 3D din scanarea GLB, laboratoare/WC/lift/scări + navigare de la scări/lift la laborator (React + react-three-fiber), vezi web-3d/README.md
 ```
 
 Fișiere existente acum în rădăcină (vezi `CONTEXT.md` §17): `2_11_2025.glb`, `glb_to_plan2d.py`, `plan_2d.json/.svg/.png`, `Orar_Cro_TI_Cen_sem1_2026-2027_public.xlsx`, `prompt-research.md`.

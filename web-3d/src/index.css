@@ -21,6 +21,18 @@
   --scene-door: #d9a066;
   --scene-door-edge: #b97b45;
   --scene-door-mat: #f1d2ad;
+  --scene-toilet: #5fa79b;
+  --scene-toilet-edge: #3f7d72;
+  --scene-toilet-mat: #cfe8e2;
+  --scene-lift: #7d8ea3;
+  --scene-lift-edge: #4a5768;
+  --scene-lift-mat: #d3dbe5;
+  --scene-stairs: #d7ebdd;
+  --scene-room: #d6cfc4;
+  --scene-route: #2563eb;
+  --scene-route-halo: #93c5fd;
+  --scene-room-edge: #a99f90;
+  --scene-stairs-line: #8fbf9f;
 }
 
 :root[data-theme='dark'] {
@@ -41,6 +53,18 @@
   --scene-door: #c48a55;
   --scene-door-edge: #e7b98a;
   --scene-door-mat: #4a3a2c;
+  --scene-toilet: #4f9488;
+  --scene-toilet-edge: #8fd0c4;
+  --scene-toilet-mat: #213d38;
+  --scene-lift: #6e7a88;
+  --scene-lift-edge: #b3bfcc;
+  --scene-lift-mat: #263241;
+  --scene-stairs: #1d3428;
+  --scene-room: #4a4540;
+  --scene-route: #60a5fa;
+  --scene-route-halo: #1e40af;
+  --scene-room-edge: #8a8278;
+  --scene-stairs-line: #3f6b52;
 }
 
 @theme inline {
