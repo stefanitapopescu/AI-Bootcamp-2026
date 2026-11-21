@@ -52,6 +52,7 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 **Ce am făcut:**
 - Diagnostic pentru „permission denied” la push-ul colegilor. Repo-ul e **public**, pe cont personal. `main` nu e protejat, nu are rulesets și nu există git hook-uri locale, deci nu de acolo vine blocarea.
 - Cauze rămase: invitația de colaborator neacceptată (expiră în 7 zile) sau git logat cu alt cont GitHub în Windows Credential Manager (`git credential-manager github logout <cont>`). La `Permission denied (publickey)` se trece pe remote HTTPS.
+- Prototipul 3D al lui Paul (`web-3d/`) adus din fork-ul `Piepaxx/AI-Bootcamp-2026`, ramura `paul/web-3d`, cu merge în `main`. Fără conflicte, `npm ci` + `npm run build` trec (bundle de ~1 MB, avertisment Vite de mărime).
 
 **Decizii:**
 - —
@@ -60,8 +61,10 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 - [ ] Fiecare coleg: acceptat invitația de la github.com/stefanitapopescu/AI-Bootcamp-2026/invitations. Dacă tot nu merge, trimis mesajul exact al erorii (cu „denied to …”).
 - [ ] Repo-ul e încă public, deși conține scanarea clădirii (`CONTEXT.md` §13). De făcut privat după ce colegii acceptă invitațiile.
 - [ ] `kotlin-ui-check.sh` nu mai are rost după trecerea la web. De scos, dacă echipa e de acord.
+- [ ] Fork-ul lui Paul de șters după push (e public și conține scanarea).
+- [ ] `web-3d/` stă în afara `web/` din `PLAN.md` §2. De mutat în `web/src/features/scene3d/` când apare scheletul lui A. De ales între `floor.json` și `plan_2d.json` ca sursă de geometrie.
 
-**Fișiere:** `docs/LOG.md`
+**Fișiere:** `docs/LOG.md`, `web-3d/**` (merge)
 
 ## 2026-11-21 12:32 · Stefanita · sesiune 5740d766
 **Rol:** organizare echipă (schimbare de stack)
