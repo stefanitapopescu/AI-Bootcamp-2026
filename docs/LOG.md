@@ -28,6 +28,7 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 - [ ] De discutat cu B/A: mutăm harta 3D și navigarea în `web/src/features/scene3d` și `routing` acum că aplicația e pe web (PWA)?
 
 **Fișiere:** `web-3d/**`, `docs/ARCHITECTURE.md`, `docs/LOG.md`
+
 ## 2026-11-21 12:37 · Stefanita · sesiune 61021345
 **Rol:** Design
 **Ce am făcut:**
