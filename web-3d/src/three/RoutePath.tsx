@@ -55,3 +55,4 @@ export function RoutePath({ points, color, halo }: { points: Vec2[]; color: stri
     </group>
   );
 }
+

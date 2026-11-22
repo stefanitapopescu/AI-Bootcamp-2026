@@ -29,13 +29,33 @@ export function entryPoints(data: FloorData): EntryPoint[] {
   return out;
 }
 
+/** Where a route can start: an entry point (stairs, lift) or a room you are leaving. */
+export interface Origin {
+  id: string; // entry id, or the door id of a room
+  name: string;
+  kind: 'stairs' | 'lift' | 'lab' | 'toilet';
+  pos: Vec2;
+  /** facing direction on arrival (entries); for rooms it is taken from the route's first segment */
+  facing?: Vec2;
+}
+
+/** Direction of the first meaningful piece of a route (for the camera when leaving a room). */
+export function routeHeading(points: Vec2[]): Vec2 {
+  const a = points[0];
+  const b = points.find((p) => Math.hypot(p[0] - a[0], p[1] - a[1]) > 1) ?? points[points.length - 1];
+  const l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  return [(b[0] - a[0]) / l, (b[1] - a[1]) / l];
+}
+
 /** Standing point in front of a door, on the hallway side. */
 export const doorGoal = (d: Door): Vec2 => add(d.center, d.normal, -0.6);
 
 // ---------- walkable grid ----------
 
 const CELL = 0.15; // m
-const CLEARANCE = 0.4; // keep this far from walls (m)
+const CLEARANCE = 0.4; // never closer to a wall than this (m)
+const PREFERRED = 1.0; // people walk this far from walls when there is room (narrow hallways: their middle)
+const WALL_COST = 4; // extra cost factor for walking right next to a wall
 
 export interface NavGrid {
   W: number;
@@ -43,6 +63,7 @@ export interface NavGrid {
   x0: number;
   z0: number;
   walk: Uint8Array;
+  clear: Float32Array; // distance to the nearest wall per cell (m)
 }
 
 function pointInPoly([px, pz]: Vec2, poly: Vec2[]) {
@@ -65,15 +86,19 @@ export function buildGrid(data: FloorData): NavGrid {
   const x0 = b.minX - CELL, z0 = b.minZ - CELL;
   const W = Math.ceil((b.maxX - b.minX) / CELL) + 3, H = Math.ceil((b.maxZ - b.minZ) / CELL) + 3;
   const walk = new Uint8Array(W * H);
+  const clear = new Float32Array(W * H);
   const segs: [Vec2, Vec2][] = [];
   for (const p of data.floor) for (const loop of [p.outer, ...p.holes]) for (let i = 0; i < loop.length; i++) segs.push([loop[i], loop[(i + 1) % loop.length]]);
   for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
     const c: Vec2 = [x0 + (i + 0.5) * CELL, z0 + (j + 0.5) * CELL];
     if (!data.floor.some((p) => pointInPoly(c, p.outer) && !p.holes.some((h) => pointInPoly(c, h)))) continue;
-    if (segs.some(([a, s]) => distToSegment(c, a, s) < CLEARANCE)) continue;
+    let d = Infinity;
+    for (const [a, s] of segs) { d = Math.min(d, distToSegment(c, a, s)); if (d < CLEARANCE) break; }
+    if (d < CLEARANCE) continue;
     walk[j * W + i] = 1;
+    clear[j * W + i] = d;
   }
-  return { W, H, x0, z0, walk };
+  return { W, H, x0, z0, walk, clear };
 }
 
 const cellOf = (g: NavGrid, p: Vec2) => [Math.floor((p[0] - g.x0) / CELL), Math.floor((p[1] - g.z0) / CELL)];
@@ -96,12 +121,12 @@ function nearestWalkable(g: NavGrid, p: Vec2): number {
   return -1;
 }
 
-/** Straight segment stays on walkable cells (sampled every half cell). */
-function lineOfSight(g: NavGrid, a: Vec2, b: Vec2) {
+/** Straight segment stays on walkable cells at least `minClear` from walls (sampled every half cell). */
+function lineOfSight(g: NavGrid, a: Vec2, b: Vec2, minClear = 0) {
   const n = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / (CELL / 2));
   for (let s = 0; s <= n; s++) {
     const [i, j] = cellOf(g, [a[0] + ((b[0] - a[0]) * s) / n, a[1] + ((b[1] - a[1]) * s) / n]);
-    if (i < 0 || j < 0 || i >= g.W || j >= g.H || !g.walk[j * g.W + i]) return false;
+    if (i < 0 || j < 0 || i >= g.W || j >= g.H || !g.walk[j * g.W + i] || g.clear[j * g.W + i] < minClear) return false;
   }
   return true;
 }
@@ -116,7 +141,8 @@ export interface Route {
 
 const WALK_SPEED = 1.3; // m/s
 
-export function findRoute(g: NavGrid, from: Vec2, to: Vec2): Route | null {
+/** A* over the grid. `penalty` (optional, per cell) makes some cells costlier: used to find alternative routes. */
+export function findRoute(g: NavGrid, from: Vec2, to: Vec2, penalty?: Float32Array): Route | null {
   const s = nearestWalkable(g, from), t = nearestWalkable(g, to);
   if (s < 0 || t < 0) return null;
   const N = g.W * g.H;
@@ -170,7 +196,9 @@ export function findRoute(g: NavGrid, from: Vec2, to: Vec2): Route | null {
       const n = nj * g.W + ni;
       if (!g.walk[n] || closed[n]) continue;
       if (di && dj && (!g.walk[j * g.W + ni] || !g.walk[nj * g.W + i])) continue; // no corner cutting
-      const ng = gScore[k] + cost;
+      // stepping next to a wall costs more: routes keep to the middle of hallways, ~1 m off walls in open areas
+      const wall = 1 + (WALL_COST * Math.max(0, PREFERRED - g.clear[n])) / PREFERRED;
+      const ng = gScore[k] + cost * wall * (penalty ? 1 + penalty[n] : 1);
       if (ng < gScore[n]) { gScore[n] = ng; came[n] = k; push([ng + h(n), n]); }
     }
   }
@@ -178,14 +206,73 @@ export function findRoute(g: NavGrid, from: Vec2, to: Vec2): Route | null {
   const cells: number[] = [];
   for (let k = t; k !== -1; k = came[k]) { cells.push(k); if (k === s) break; }
   cells.reverse();
-  // string pulling: keep only the turns needed to stay on walkable cells
+  // string pulling: keep only the turns needed to stay on walkable cells, and never cut closer to a wall than the
+  // A* path itself did there (up to the preferred distance), so straightened lines don't hug walls at corners
   const raw: Vec2[] = [from, ...cells.map((k) => centerOf(g, k)), to];
+  const rawClear = [Infinity, ...cells.map((k) => g.clear[k]), Infinity];
   const pts: Vec2[] = [raw[0]];
   let anchor = 0;
+  let minC = Infinity;
   for (let i = 2; i < raw.length; i++) {
-    if (!lineOfSight(g, raw[anchor === 0 ? 1 : anchor], raw[i])) { pts.push(raw[i - 1]); anchor = i - 1; }
+    minC = Math.min(minC, rawClear[i - 1], rawClear[i]);
+    const need = Math.min(PREFERRED, minC) - 0.05;
+    if (!lineOfSight(g, raw[anchor === 0 ? 1 : anchor], raw[i], need)) {
+      pts.push(raw[i - 1]);
+      anchor = i - 1;
+      minC = Math.min(rawClear[i - 1], rawClear[i]);
+    }
   }
   pts.push(raw[raw.length - 1]);
   const meters = pts.reduce((sum, p, i) => (i ? sum + Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) : 0), 0);
   return { points: pts, meters, minutes: meters / WALK_SPEED / 60 };
+}
+
+// ---------- alternative routes ----------
+
+/** Shortest distance from a point to a polyline. */
+function distToPolyline(p: Vec2, line: Vec2[]) {
+  let d = Infinity;
+  for (let i = 1; i < line.length; i++) d = Math.min(d, distToSegment(p, line[i - 1], line[i]));
+  return d;
+}
+
+/** Points every `step` meters along a polyline. */
+function samples(line: Vec2[], step: number): Vec2[] {
+  const out: Vec2[] = [line[0]];
+  for (let i = 1; i < line.length; i++) {
+    const [ax, az] = line[i - 1], [bx, bz] = line[i];
+    const n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / step));
+    for (let s = 1; s <= n; s++) out.push([ax + ((bx - ax) * s) / n, az + ((bz - az) * s) / n]);
+  }
+  return out;
+}
+
+/**
+ * A genuinely different way between two points, if there is one: the cells near the best route are made
+ * costlier and A* runs again. Kept only when it shares less than 60 % of its length with the best route and is
+ * not much longer (corridor layouts are mostly trees, so often there is none).
+ */
+export function alternativeRoute(g: NavGrid, from: Vec2, to: Vec2, best: Route): Route | null {
+  const pen = new Float32Array(g.W * g.H);
+  const R = 1.5; // m around the best route
+  const r = Math.ceil(R / CELL);
+  for (const p of samples(best.points, CELL)) {
+    const [ci, cj] = cellOf(g, p);
+    for (let j = cj - r; j <= cj + r; j++) for (let i = ci - r; i <= ci + r; i++) {
+      if (i < 0 || j < 0 || i >= g.W || j >= g.H) continue;
+      if (Math.hypot(i - ci, j - cj) * CELL <= R) pen[j * g.W + i] = 3;
+    }
+  }
+  // leave the ends free: both routes have to start and finish at the same doors
+  for (const end of [from, to]) {
+    const [ci, cj] = cellOf(g, end);
+    const e = Math.ceil(2 / CELL);
+    for (let j = cj - e; j <= cj + e; j++) for (let i = ci - e; i <= ci + e; i++) if (i >= 0 && j >= 0 && i < g.W && j < g.H) pen[j * g.W + i] = 0;
+  }
+  const alt = findRoute(g, from, to, pen);
+  // not much longer, but not just the other side of the same corridor either
+  if (!alt || alt.meters > best.meters * 1.6 + 6 || alt.meters < best.meters + 2) return null;
+  const pts = samples(alt.points, 0.5);
+  const shared = pts.filter((p) => distToPolyline(p, best.points) < 1.0).length / pts.length;
+  return shared < 0.6 ? alt : null;
 }

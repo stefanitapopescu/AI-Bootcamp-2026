@@ -42,12 +42,20 @@ Ce s-a făcut, ce s-a decis, ce a rămas. Fiecare sesiune de lucru (din orice co
 - **Navigare:** alegi Scări 1 / Scări 2 / Lift și un laborator; traseul se calculează cu A* pe o grilă a holurilor (40 cm de pereți) și se netezește, cu distanță și timp de mers. Camera vine din direcția punctului de intrare. Toate cele 24 de combinații au traseu.
 - `web-3d/CLAUDE.md` (reguli pentru folder), `web-3d/README.md`; `docs/ARCHITECTURE.md` actualizat.
 - Am adus pe ramură ultimele schimbări din `main` (trecerea pe web), prin merge, fără `--force`.
+- **Actualizare 2026-11-22:** `web-3d/` adus la zi cu prototipul:
+  - etajele 6 + 7 (7 e copie), trasee între etaje cu variante și pași pe etaj, vederi 2D / 3D;
+  - interfață de telefon (panou, gesturi), căutare, favorite, linkuri, tur, română / engleză;
+  - antete de securitate, recuperare când harta nu se încarcă, reparații la pin și la atingerea laboratoarelor.
 
 **Decizii:**
 - Biblioteci noi, doar în `web-3d/`: three.js, @react-three/fiber, @react-three/drei, Tailwind v4, @gltf-transform/core, three-mesh-bvh, jpeg-js.
 - Scanarea nu e duplicată: scripturile citesc `../2_11_2025.glb`. Dacă GLB-ul se mută în `data/`, trebuie actualizate căile din `web-3d/package.json`.
+- 2026-11-22, doar în `web-3d/`: biblioteci noi lucide-react și @fontsource-variable/inter; fără orar / ocuparea sălilor (doar navigare). `floor.json`, folosit de `web/`, e neschimbat.
 
 **Ce a rămas:**
+- [ ] Buguri cunoscute în `web-3d/`: harta sare la redimensionare (tastatura), căutarea rămâne deschisă la atingerea hărții, butoane acoperite de panou pe ecrane mici, „60 sec”, lățimea panourilor pe desktop, Lab 5 sub butoane la 360 px.
+- [ ] Netestate în browser: ultimele reparații la Înapoi, plecare = destinație, eticheta de etaj. Netestat pe Safari / Firefox.
+- [ ] De scanat etajul 7 (acum e o copie).
 - [ ] Numele reale ale laboratoarelor: doar B625 se citește din scanare; Lab 1–7 sunt provizorii (`web-3d/scripts/door-labels.json`).
 - [ ] 2–4 uși nedetectate (cele cu afișe pe ele); de adăugat manual în `door-labels.json`.
 - [ ] De discutat cu B/A: mutăm harta 3D și navigarea în `web/src/features/scene3d` și `routing` acum că aplicația e pe web (PWA)?

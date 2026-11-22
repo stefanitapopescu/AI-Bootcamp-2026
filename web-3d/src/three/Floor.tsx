@@ -20,7 +20,7 @@ export function Floor({ color, groundColor }: { color: string; groundColor: stri
   }, []);
 
   const { bounds } = floorData;
-  const size = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) * 3;
+  const size = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) * 1.4; // only around the building
 
   return (
     <group>

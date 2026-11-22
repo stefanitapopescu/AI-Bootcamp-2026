@@ -2,88 +2,154 @@
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
+/* the wide layout (sm:) needs a wide window AND a non-phone device; phones always get the phone layout (max-sm:),
+   also in landscape or "Desktop site" mode (see src/device.ts) */
+@custom-variant sm {
+  @media (width >= 40rem) {
+    &:where(:root:not([data-phone]) *, :root:not([data-phone])) {
+      @slot;
+    }
+  }
+}
+@custom-variant max-sm {
+  @media (width < 40rem) {
+    @slot;
+  }
+  &:where(:root[data-phone] *, :root[data-phone]) {
+    @slot;
+  }
+}
+
 :root {
-  --bg: #eef1f6;
-  --surface: rgba(255, 255, 255, 0.82);
+  /* UI: maps-style light theme */
+  --bg: #e4ecf7;
+  /* map backdrop: soft sky-blue wash instead of flat gray (the canvas is transparent) */
+  --backdrop-center: #f5f8fd;
+  --backdrop-edge: #cbdaf0;
+  --surface: rgba(255, 255, 255, 0.96);
   --surface-solid: #ffffff;
-  --border: rgba(15, 23, 42, 0.08);
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --accent: #2563eb;
-  --accent-soft: rgba(37, 99, 235, 0.12);
+  --surface-2: #f1f3f4;
+  --border: rgba(60, 64, 67, 0.14);
+  --text: #202124;
+  --text-muted: #5f6368;
+  --accent: #1a73e8;
+  --accent-soft: rgba(26, 115, 232, 0.1);
+  --success: #188038;
+  --pin: #ea4335;
 
   /* scene */
-  --scene-bg: #e2e8f0;
-  --scene-ground: #e2e8f0;
+  --scene-bg: #cbdaf0;
+  --scene-ground: #6f86a8;
   --scene-floor: #ffffff;
-  --scene-wall: #f8fafc;
-  --scene-wall-top: #475569;
-  --scene-door: #d9a066;
-  --scene-door-edge: #b97b45;
-  --scene-door-mat: #f1d2ad;
-  --scene-toilet: #5fa79b;
-  --scene-toilet-edge: #3f7d72;
-  --scene-toilet-mat: #cfe8e2;
-  --scene-lift: #7d8ea3;
-  --scene-lift-edge: #4a5768;
-  --scene-lift-mat: #d3dbe5;
-  --scene-stairs: #d7ebdd;
-  --scene-room: #d6cfc4;
-  --scene-route: #2563eb;
-  --scene-route-halo: #93c5fd;
-  --scene-room-edge: #a99f90;
-  --scene-stairs-line: #8fbf9f;
+  --scene-wall: #f8f9fa;
+  --scene-wall-top: #80868b;
+  --scene-door: #f2a541;
+  --scene-door-edge: #c97d1c;
+  --scene-door-mat: #fde3c0;
+  --scene-toilet: #34a3a0;
+  --scene-toilet-edge: #1f7a78;
+  --scene-toilet-mat: #cdeeed;
+  --scene-lift: #7b8794;
+  --scene-lift-edge: #4d5763;
+  --scene-lift-mat: #dfe3e8;
+  --scene-stairs: #d4ecd9;
+  --scene-stairs-line: #81c995;
+  --scene-room: #dad6cf;
+  --scene-room-edge: #aaa398;
+  --scene-route: #1a73e8;
+  --scene-route-halo: #aecbfa;
+  --scene-walker: #ffc928; /* the little guy walking the route */
+  --scene-walker-dark: #3c4a63; /* his legs and eyes */
+  --scene-site-room: #e2ded6; /* building footprint: rooms around the hallways (estimated) */
+  --scene-site-edge: #bdb4a6; /* building outline */
+  --scene-plot: #eae7e1; /* the ground the building stands on (soft stone, feathered edge) */
 }
 
 :root[data-theme='dark'] {
-  --bg: #0b1020;
-  --surface: rgba(17, 24, 39, 0.78);
-  --surface-solid: #111827;
-  --border: rgba(148, 163, 184, 0.14);
-  --text: #e2e8f0;
-  --text-muted: #94a3b8;
-  --accent: #60a5fa;
-  --accent-soft: rgba(96, 165, 250, 0.16);
+  /* UI: neutral dark surfaces, brighter text for readability */
+  --bg: #111722;
+  --backdrop-center: #1f2a3c;
+  --backdrop-edge: #0c111a;
+  --surface: rgba(36, 39, 44, 0.96);
+  --surface-solid: #24272c;
+  --surface-2: #2f3338;
+  --border: rgba(255, 255, 255, 0.14);
+  --text: #f1f3f4;
+  --text-muted: #b4bac2;
+  --accent: #8ab4f8;
+  --accent-soft: rgba(138, 180, 248, 0.18);
+  --success: #81c995;
+  --pin: #f28b82;
 
-  --scene-bg: #0b1020;
-  --scene-ground: #0b1020;
-  --scene-floor: #1e293b;
-  --scene-wall: #334155;
-  --scene-wall-top: #94a3b8;
-  --scene-door: #c48a55;
-  --scene-door-edge: #e7b98a;
-  --scene-door-mat: #4a3a2c;
-  --scene-toilet: #4f9488;
-  --scene-toilet-edge: #8fd0c4;
-  --scene-toilet-mat: #213d38;
-  --scene-lift: #6e7a88;
-  --scene-lift-edge: #b3bfcc;
-  --scene-lift-mat: #263241;
-  --scene-stairs: #1d3428;
-  --scene-room: #4a4540;
-  --scene-route: #60a5fa;
-  --scene-route-halo: #1e40af;
-  --scene-room-edge: #8a8278;
-  --scene-stairs-line: #3f6b52;
+  /* scene: lighter floor and bright wall outlines so the plan reads clearly */
+  --scene-bg: #0c111a;
+  --scene-ground: #05080d;
+  --scene-floor: #31363e;
+  --scene-wall: #4a515c;
+  --scene-wall-top: #d2d7de;
+  --scene-door: #f6b65e;
+  --scene-door-edge: #ffd59a;
+  --scene-door-mat: #6a4f2c;
+  --scene-toilet: #4fc1bc;
+  --scene-toilet-edge: #a5ebe7;
+  --scene-toilet-mat: #24504e;
+  --scene-lift: #95a3b5;
+  --scene-lift-edge: #d6dee8;
+  --scene-lift-mat: #3a4350;
+  --scene-stairs: #2a4a35;
+  --scene-stairs-line: #6fbf86;
+  --scene-room: #6b665e;
+  --scene-room-edge: #b3aba0;
+  --scene-route: #8ab4f8;
+  --scene-route-halo: #1f4a8c;
+  --scene-walker: #ffcf3d;
+  --scene-walker-dark: #1d2433;
+  --scene-site-room: #20252c;
+  --scene-site-edge: #4b525d;
+  --scene-plot: #1b2029;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-solid: var(--surface-solid);
+  --color-surface-2: var(--surface-2);
+  --color-success: var(--success);
+  --color-pin: var(--pin);
   --color-border: var(--border);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
 body,
 #root {
   height: 100%;
+  height: 100dvh; /* mobile browsers: follow the visible area as the address bar shows/hides */
   margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* the map owns all touch gestures: no page scroll, pull-to-refresh or double-tap zoom */
+canvas {
+  touch-action: none;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+/* buttons drawn on the map (labels, pins, floor tags, "Continue on…"): the map owns every gesture that starts on
+   them, so the browser must not take over the touch (it would cancel the drag/pinch) */
+.map-canvas button {
+  touch-action: none;
 }
 
 body {
@@ -92,4 +158,122 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  overscroll-behavior: none;
+  position: fixed; /* iOS: stop the page from rubber-banding behind the map */
+  inset: 0;
+}
+
+/* text halo for map labels (like map label strokes) */
+.map-label {
+  text-shadow:
+    0 0 2px var(--bg),
+    0 0 2px var(--bg),
+    0 0 3px var(--bg),
+    0 0 4px var(--bg);
+}
+
+/* map backdrop behind the transparent 3D canvas: light in the middle, deeper at the edges, so the white
+   floor plan stands out (figure/ground) without a flat, empty page */
+.map-backdrop {
+  background:
+    radial-gradient(120% 90% at 50% 45%, var(--backdrop-center) 0%, transparent 70%),
+    linear-gradient(180deg, var(--backdrop-edge) 0%, var(--bg) 100%);
+}
+
+/* "Up to Etaj 7" banner: drops in, holds, fades out */
+.floor-banner {
+  animation: floor-banner 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes floor-banner {
+  0% { opacity: 0; transform: translate(-50%, -12px) scale(0.96); }
+  12% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -6px) scale(0.98); }
+}
+.floor-banner-arrow {
+  animation: floor-arrow 0.6s ease-in-out 3;
+}
+@keyframes floor-arrow {
+  50% { transform: translateY(calc(var(--dir) * 3px)); }
+}
+
+/* minimized phone sheet: only its header strip shows; the content under it fades out instead of peeking through */
+@media (max-width: 639px) {
+  .sheet-min > :not(.sheet-header):not(.sheet-fab) {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+section[data-overlay] > * {
+  transition: opacity 0.25s ease-out;
+}
+
+/* intro tour: finger dots on a tiny phone screen, looping */
+.finger {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  top: 50%;
+  left: 50%;
+}
+.gesture-move .finger-a { animation: g-move 1.8s ease-in-out infinite; }
+.gesture-tilt .finger-a { animation: g-tilt 1.8s ease-in-out infinite; }
+.gesture-zoom .finger-a { animation: g-zoom-a 1.8s ease-in-out infinite; }
+.gesture-zoom .finger-b { animation: g-zoom-b 1.8s ease-in-out infinite; }
+.gesture-turn .finger-a, .gesture-turn .finger-b { top: 50%; left: 50%; }
+.gesture-turn { --r: 16px; }
+.gesture-turn .finger-a { animation: g-turn 1.8s ease-in-out infinite; }
+.gesture-turn .finger-b { animation: g-turn-b 1.8s ease-in-out infinite; }
+@keyframes g-move { 0%, 100% { transform: translate(-12px, 14px); } 50% { transform: translate(10px, -14px); } }
+@keyframes g-tilt { 0%, 100% { transform: translate(-14px, 0); } 50% { transform: translate(14px, 0); } }
+@keyframes g-zoom-a { 0%, 100% { transform: translate(-5px, 6px); } 50% { transform: translate(-14px, 20px); } }
+@keyframes g-zoom-b { 0%, 100% { transform: translate(5px, -6px); } 50% { transform: translate(14px, -20px); } }
+@keyframes g-turn { 0%, 100% { transform: rotate(0deg) translateY(calc(-1 * var(--r))); } 50% { transform: rotate(70deg) translateY(calc(-1 * var(--r))); } }
+@keyframes g-turn-b { 0%, 100% { transform: rotate(180deg) translateY(calc(-1 * var(--r))); } 50% { transform: rotate(250deg) translateY(calc(-1 * var(--r))); } }
+@media (prefers-reduced-motion: reduce) {
+  .finger { animation: none !important; }
+}
+
+/* small confirmation pill ("Link copied") */
+.toast {
+  animation: toast 2.2s ease both;
+}
+@keyframes toast {
+  0% { opacity: 0; transform: translate(-50%, -8px); }
+  10%, 85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
+}
+
+/* tactile press feedback on every button (uses the separate `scale` property, so it never fights translate) */
+button {
+  transition-property: color, background-color, border-color, opacity, scale;
+  transition-duration: 150ms;
+}
+button:active:not(:disabled) {
+  scale: 0.96;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+input:focus-visible {
+  outline: none; /* the search pill itself shows focus */
+}
+
+/* the destination pin drops in when a room is chosen (instant feedback) */
+.pin-drop svg {
+  animation: pin-drop 0.35s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  transform-origin: 50% 100%;
+}
+@keyframes pin-drop {
+  0% { transform: translateY(-14px) scale(0.6); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pin-drop svg { animation: none; }
 }
