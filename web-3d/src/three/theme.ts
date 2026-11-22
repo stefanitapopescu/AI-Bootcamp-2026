@@ -21,6 +21,11 @@ export interface SceneColors {
   routeHalo: string;
   roomEdge: string;
   stairsLine: string;
+  walker: string;
+  walkerDark: string;
+  siteRoom: string;
+  siteEdge: string;
+  plot: string;
 }
 
 /** Reads the scene color tokens from CSS so the 3D scene follows the theme. */
@@ -48,5 +53,10 @@ export function readSceneColors(): SceneColors {
     routeHalo: v('--scene-route-halo'),
     roomEdge: v('--scene-room-edge'),
     stairsLine: v('--scene-stairs-line'),
+    walker: v('--scene-walker'),
+    walkerDark: v('--scene-walker-dark'),
+    siteRoom: v('--scene-site-room'),
+    siteEdge: v('--scene-site-edge'),
+    plot: v('--scene-plot'),
   };
 }

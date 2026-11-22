@@ -1,4 +1,4 @@
-# web-3d: harta 3D minimalistă cu navigare (prototip web)
+# web-3d: harta etajelor, 2D / 3D, cu navigare (prototip web)
 
 Prototip web care transformă scanarea 3D a etajului (`../2_11_2025.glb`, etajul 6, corpul B) într-o hartă 3D minimalistă. Pe hartă sunt laboratoarele, toaleta, lifturile și scările, iar navigarea arată traseul de la scări sau lift până la ușa laboratorului ales. Rulează în browser, inclusiv pe telefon.
 
@@ -19,8 +19,11 @@ npm run dev -- --host    # accesibil și de pe telefon, în aceeași rețea
   - **1 toaletă** (teal, WC) și **2 lifturi** (ardezie, Lift).
   - **Celelalte uși** sunt desenate în gri-bej, discret.
 - **Scări:** `scripts/detect-stairs.mjs` găsește cele două case de scări din înălțimile scanării. Sunt desenate ca o zonă verde cu trepte, cu deschidere în perete.
-- **Navigare:** alegi de unde vii (Scări 1, Scări 2, Lift) și laboratorul (din listă sau atingând eticheta pe hartă). Traseul e calculat cu A* pe o grilă a holurilor, la 40 cm de pereți, apoi netezit. E desenat albastru, animat spre ușă, iar porțiunile ascunse de pereți apar estompate. Camera se așază în spatele punctului de intrare, cu fața în direcția în care pornești, și încadrează tot traseul. Panoul arată distanța și timpul de mers.
-- Vedere 3D sau de sus, temă luminoasă/întunecată, merge pe telefon.
+- **Etaje:** Etaj 6 (scanat) și Etaj 7 (**copie** a geometriei etajului 6, până e scanat; laboratoarele continuă cu Lab 8–14, B725). Un etaj se deschide în 2D, „Toate etajele” în 3D.
+- **Navigare:** alegi plecarea (o sală, scările sau liftul) și destinația, compari variantele (cea mai rapidă prima), apeși Pornește și primești pașii pe fiecare etaj. Traseul e calculat cu A*, pe mijlocul holurilor.
+- **Telefon întâi:** panou tras de jos, gesturi pe hartă, căutare fără diacritice, favorite, linkuri de trimis (`?to=`, `&from=`), tur la prima deschidere, română / engleză, temă după dispozitiv.
+- **Estimare:** conturul clădirii din jurul holurilor e aproximativ; doar holurile sunt scanate.
+- **Hosting:** Vercel, publicat din folderul local al lui Paul cu `vercel --prod` (un push pe GitHub nu actualizează site-ul): https://ai-prototype-ashy.vercel.app. Antetele de securitate sunt în `vercel.json`.
 
 ## Comenzi
 
@@ -43,12 +46,15 @@ web-3d/
 │   ├── inspect-scan.mjs      imagini de depanare
 │   └── lib/                  raycasting (BVH), texturi, PNG
 ├── src/
-│   ├── map/                  floor.json (generat), tipuri, deschideri în pereți
-│   ├── nav/navigation.ts     puncte de intrare, grilă, A*, netezire
-│   ├── three/                Scene, Floor, Walls, Doors, Stairs, Markers, RoutePath, CameraRig
-│   └── App.tsx               interfața (panou de navigare, controale)
+│   ├── map/                  floor.json (generat), etaje, tipuri, deschideri în pereți
+│   ├── nav/                  grilă + A* (navigation), trasee între etaje (trip), pași (directions)
+│   ├── three/                scena, etajele, etichetele, traseul, camera
+│   ├── ui/                   căutare, panouri, butoane, tur
+│   ├── i18n.ts               textele în română și engleză
+│   └── App.tsx               starea aplicației
+├── public/                   iconițe, manifest, boot.js (reîncearcă dacă descărcarea eșuează)
 ├── CLAUDE.md                 reguli pentru Claude în acest folder
 └── log.md                    jurnalul modificărilor prototipului
 ```
 
-**Stack:** Vite, React 18, TypeScript, Tailwind v4, three.js, @react-three/fiber, @react-three/drei. Scripturile Node folosesc `@gltf-transform/core`, `three-mesh-bvh` și `jpeg-js`.
+**Stack:** Vite, React 18, TypeScript, Tailwind v4, three.js, @react-three/fiber, @react-three/drei, lucide-react, Inter (găzduit local, @fontsource-variable). Scripturile Node folosesc `@gltf-transform/core`, `three-mesh-bvh` și `jpeg-js`.
